@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({Key? key}) : super(key: key);
+  const SettingScreen({super.key});
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();
@@ -47,35 +47,16 @@ class _SettingScreenState extends State<SettingScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppTheme.isLightTheme == false
-            ? HexColor('#15141f')
-            : Theme.of(context).appBarTheme.backgroundColor,
-        elevation: 0,
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).textTheme.titleLarge!.color,
-          ),
-        ),
-      ),
-      body: Container(
-        height: Get.height,
-        width: Get.width,
-        color: AppTheme.isLightTheme == false
-            ? HexColor('#15141f')
-            : Theme.of(context).appBarTheme.backgroundColor,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 24, right: 24),
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Settings",
+                  'settings'.tr,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
@@ -83,7 +64,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  "General",
+                  'general'.tr,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -93,7 +74,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 const SizedBox(height: 16),
                 notificationView(
                   context,
-                  "Dark Mode",
+                  'dark_mode'.tr,
                   CupertinoSwitch(
                     value: profileController.darkMode.value,
                     activeColor: HexColor(AppTheme.primaryColorString!),
@@ -112,7 +93,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 const SizedBox(height: 22),
                 customRow(
                   context,
-                  "Reset Password",
+                  'reset_password'.tr,
                 ),
                 const SizedBox(height: 32),
                 InkWell(
@@ -125,23 +106,23 @@ class _SettingScreenState extends State<SettingScreen> {
                   },
                   child: customRow(
                     context,
-                    "Notifications",
+                    'notifications'.tr,
                   ),
                 ),
                 const SizedBox(height: 32),
                 customRow(
                   context,
-                  "Privacy Settings",
+                  'privacy_settings'.tr,
                 ),
                 const SizedBox(height: 32),
                 customRow(
                   context,
-                  "Help Center",
+                  'help_center'.tr,
                 ),
                 const SizedBox(height: 32),
                 customRow(
                   context,
-                  "Contact Us",
+                  'contact_us'.tr,
                 ),
                 const SizedBox(height: 32),
                 InkWell(
@@ -150,12 +131,12 @@ class _SettingScreenState extends State<SettingScreen> {
                   },
                   child: customRow(
                     context,
-                    "Log out",
+                    'log_out'.tr,
                   ),
                 ),
                 const SizedBox(height: 32),
                 Text(
-                  "Follow Us",
+                  'follow_us'.tr,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -191,7 +172,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text(
-                    "Log out",
+                    'log_out'.tr,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -202,7 +183,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    "Finpay © 2021 v1.0",
+                    'version'.tr,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
