@@ -1,16 +1,77 @@
-# finpay
+# FinPay
 
-A new Flutter project.
+![PowerShell Flutter Doctor](assets/images/readme_powershell.png)
 
-## Getting Started
+> **Este proyecto fue realizado para cumplir con la materia de _Programación de Dispositivos Móviles_**
+>
+> ![Logo UCOM](assets/images/logo_ucom.png)
 
-This project is a starting point for a Flutter application.
+FinPay es una plantilla de aplicación Flutter moderna y personalizable, ideal para proyectos de banca, finanzas o billeteras digitales. Incluye gestión de temas, navegación, internacionalización y una arquitectura escalable basada en GetX.
 
-A few resources to get you started if this is your first Flutter project:
+## Características principales
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- **Pantalla de inicio (Home):** Vista general de cuentas, tarjetas y accesos rápidos a funciones como transferencias y recargas.
+- **Estadísticas:** Visualización de gastos, ingresos y análisis por semana, mes o año.
+- **Gestión de tarjetas:** Visualización y administración de tarjetas bancarias.
+- **Perfil de usuario:** Información personal, edición de perfil y acceso a configuraciones.
+- **Configuración:** Cambia el tema (claro/oscuro), gestiona notificaciones, privacidad, ayuda y cierre de sesión.
+- **Internacionalización:** Soporte multilenguaje (español por defecto, inglés como fallback).
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Estructura del proyecto
+
+```
+lib/
+├── config/         # Temas, estilos y traducciones
+├── controller/     # Controladores GetX para lógica de negocio
+├── model/          # Modelos de datos
+├── view/           # Vistas principales (pantallas)
+│   ├── home/
+│   ├── statistics/
+│   ├── card/
+│   ├── profile/
+│   └── ...
+├── widgets/        # Widgets reutilizables
+└── main.dart       # Punto de entrada de la app
+assets/
+├── images/         # Imágenes y recursos gráficos
+└── country_code.json # Datos de países
+```
+
+## Dependencias principales
+- [Flutter](https://flutter.dev/) 3.x
+- [GetX](https://pub.dev/packages/get)
+- [Google Fonts](https://pub.dev/packages/google_fonts)
+- [flutter_svg](https://pub.dev/packages/flutter_svg)
+- [card_swiper](https://pub.dev/packages/card_swiper)
+- [pinput](https://pub.dev/packages/pinput)
+
+## Instalación y ejecución
+
+1. **Clona el repositorio:**
+   ```sh
+   git clone <repo-url>
+   cd flutter-template-ucom
+   ```
+2. **Instala dependencias:**
+   ```sh
+   flutter pub get
+   ```
+3. **Ejecuta la app:**
+   ```sh
+   flutter run
+   ```
+
+## Internacionalización (i18n)
+- Español es el idioma por defecto.
+- Puedes agregar más idiomas editando `lib/config/translation.dart`.
+
+## Requisitos
+- Flutter 3.29.3 o superior
+- Android SDK, Xcode o herramientas para tu plataforma
+
+## Créditos
+- Plantilla desarrollada por el equipo de FinPay.
+- Basada en Flutter y GetX.
+
+## Licencia
+Este proyecto es solo para fines educativos y de demostración. Puedes adaptarlo según tus necesidades.
