@@ -1,7 +1,5 @@
 # FinPay
 
-![PowerShell Flutter Doctor](assets/readme_powershell.png)
->
 ![Primera Ejecucion](assets/ejecucion1.png)
 
 > **Este proyecto fue realizado para cumplir con la materia de _Programación de Dispositivos Móviles_**
