@@ -71,7 +71,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Reset your Password",
+                          "Restablece tu Contraseña",
                           style:
                               Theme.of(context).textTheme.titleLarge!.copyWith(
                                     fontWeight: FontWeight.w800,
@@ -82,7 +82,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: 4,
                         ),
                         Text(
-                          "At least 8 characters, with uppercase and lowercase letters",
+                          "Al menos 8 caracteres, con letras mayúsculas y minúsculas",
                           textAlign: TextAlign.center,
                           style:
                               Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -119,7 +119,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               // color:  HexColor(AppTheme.secondaryColorString!)
                             ),
                           ),
-                          hintText: "New Password",
+                          hintText: "Nueva Contraseña",
                           obscure: authController.isNewVisible.value == true
                               ? false
                               : true,
@@ -157,7 +157,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               // color:  HexColor(AppTheme.secondaryColorString!)
                             ),
                           ),
-                          hintText: "Confirm Password",
+                          hintText: "Confirmar Contraseña",
                           obscure: authController.isConfirmVisible.value == true
                               ? false
                               : true,
@@ -183,7 +183,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           },
                           child: customButton(
                               HexColor(AppTheme.primaryColorString!),
-                              "Sign in",
+                              "Iniciar Sesión",
                               HexColor(AppTheme.secondaryColorString!),
                               context),
                         ),

@@ -32,7 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         title: Text(
-          "Chat Assistant",
+          "chat_assistant".tr,
           style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
@@ -72,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "Hi Daniel, I’m Fin 😎",
+                              "hi_daniel".tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -97,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "I’m here to help your personal\nfinance stuff easier 💰",
+                              "help_finance".tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -123,7 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "So, what can I help?",
+                              "what_can_help".tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -150,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
-                                  "How to spend less?",
+                                  "how_spend_less".tr,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
@@ -178,7 +178,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "I can help you with that",
+                              "can_help".tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -206,7 +206,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Introducing Finpay card! 🎉",
+                                  "introducing_card".tr,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
@@ -243,7 +243,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "A smart debit and credit card that can help save more money! 💳",
+                              "smart_card".tr,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!

@@ -68,7 +68,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                         height: 32,
                       ),
                       Text(
-                        "First, let’s verify your identity",
+                        "Primero, verifiquemos tu identidad",
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
                               fontWeight: FontWeight.w800,
@@ -79,7 +79,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                         height: 24,
                       ),
                       Text(
-                        "We’re required by law to verify your identity before you can spend with your card or send money. Your information will be encrypted and stored securely.",
+                        "Por ley, estamos obligados a verificar tu identidad antes de que puedas gastar con tu tarjeta o enviar dinero. Tu información será encriptada y almacenada de forma segura.",
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w500,
@@ -99,7 +99,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                     },
                     child: customButton(
                         HexColor(AppTheme.primaryColorString!),
-                        "Verify Identity",
+                        "Verificar Identidad",
                         HexColor(AppTheme.secondaryColorString!),
                         context),
                   ),

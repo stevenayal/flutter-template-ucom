@@ -79,7 +79,7 @@ class _CreateNewPinScreenState extends State<CreateNewPinScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Create New Pin",
+                          "Crear Nuevo PIN",
                           style:
                               Theme.of(context).textTheme.titleLarge!.copyWith(
                                     fontWeight: FontWeight.w800,
@@ -90,7 +90,7 @@ class _CreateNewPinScreenState extends State<CreateNewPinScreen> {
                           height: 4,
                         ),
                         Text(
-                          "Add a pin number to make your wallet more secure",
+                          "Agrega un número PIN para hacer tu billetera más segura",
                           textAlign: TextAlign.center,
                           style:
                               Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -125,7 +125,7 @@ class _CreateNewPinScreenState extends State<CreateNewPinScreen> {
                           },
                           child: customButton(
                               HexColor(AppTheme.primaryColorString!),
-                              "Continue",
+                              "Continuar",
                               HexColor(AppTheme.secondaryColorString!),
                               context),
                         ),

@@ -51,7 +51,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Notifications",
+                      "notifications".tr,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
@@ -60,7 +60,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     const SizedBox(height: 32),
                     notificationView(
                       context,
-                      "Fee alert",
+                      "fee_alert".tr,
                       CupertinoSwitch(
                         value: profileController.alert.value,
                         activeColor: HexColor(AppTheme.primaryColorString!),
@@ -74,7 +74,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     const SizedBox(height: 32),
                     notificationView(
                       context,
-                      "Big expense alert",
+                      "big_expense_alert".tr,
                       CupertinoSwitch(
                         value: profileController.expense.value,
                         activeColor: HexColor(AppTheme.primaryColorString!),
@@ -88,7 +88,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     const SizedBox(height: 32),
                     notificationView(
                       context,
-                      "Credit utilization alert",
+                      "credit_utilization_alert".tr,
                       CupertinoSwitch(
                         value: profileController.utilize.value,
                         activeColor: HexColor(AppTheme.primaryColorString!),
@@ -102,7 +102,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     const SizedBox(height: 32),
                     notificationView(
                       context,
-                      "Low balance alert",
+                      "low_balance_alert".tr,
                       CupertinoSwitch(
                         value: profileController.balance.value,
                         activeColor: HexColor(AppTheme.primaryColorString!),
@@ -116,7 +116,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     const SizedBox(height: 32),
                     notificationView(
                       context,
-                      "Recurring paid alert",
+                      "recurring_paid_alert".tr,
                       CupertinoSwitch(
                         value: profileController.paid.value,
                         activeColor: HexColor(AppTheme.primaryColorString!),
@@ -130,7 +130,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     const SizedBox(height: 32),
                     notificationView(
                       context,
-                      "Spending update",
+                      "spending_update".tr,
                       CupertinoSwitch(
                         value: profileController.spending.value,
                         activeColor: HexColor(AppTheme.primaryColorString!),
@@ -150,7 +150,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             padding:
                 const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
             child: CustomButton(
-              title: "Save Changes",
+              title: "save_changes".tr,
               onTap: () {
                 Navigator.pop(context);
               },

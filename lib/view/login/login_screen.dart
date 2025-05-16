@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 38,
                   ),
                   Text(
-                    "Bienvenido!",
+                    "¡Bienvenido!",
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontWeight: FontWeight.w700,
                           fontSize: 24,
@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 4,
                   ),
                   Text(
-                    "Ingrese a cuenta",
+                    "Ingresa a tu cuenta",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
@@ -187,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "Olvidaste tu clave ?",
+                                    "¿Olvidaste tu contraseña?",
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!
@@ -244,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("No tienes una cuenta ?",
+                                    Text("¿No tienes una cuenta?",
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium!

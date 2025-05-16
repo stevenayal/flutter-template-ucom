@@ -68,7 +68,7 @@ class _VerifyYourIdentityScreenState extends State<VerifyYourIdentityScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Verify your identity",
+                          "Verifica tu identidad",
                           style:
                               Theme.of(context).textTheme.titleLarge!.copyWith(
                                     fontWeight: FontWeight.w800,
@@ -79,7 +79,7 @@ class _VerifyYourIdentityScreenState extends State<VerifyYourIdentityScreen> {
                           height: 4,
                         ),
                         Text(
-                          "We have just sent a code to",
+                          "Acabamos de enviar un código a",
                           style:
                               Theme.of(context).textTheme.bodyMedium!.copyWith(
                                     fontWeight: FontWeight.w500,
@@ -117,7 +117,7 @@ class _VerifyYourIdentityScreenState extends State<VerifyYourIdentityScreen> {
                           },
                           child: customButton(
                               HexColor(AppTheme.primaryColorString!),
-                              "Continue",
+                              "Continuar",
                               HexColor(AppTheme.secondaryColorString!),
                               context),
                         ),
