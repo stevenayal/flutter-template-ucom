@@ -1,6 +1,6 @@
 # FinPay
 
-![PowerShell Flutter Doctor](assets/images/readme_powershell.png)
+![PowerShell Flutter Doctor](assets/readme_powershell.png)
 >
 ![Primera Ejecucion](assets/ejecucion1.png)
 
