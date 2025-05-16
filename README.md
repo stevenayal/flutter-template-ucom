@@ -4,7 +4,7 @@
 
 > **Este proyecto fue realizado para cumplir con la materia de _Programación de Dispositivos Móviles_**
 >
-> ![Logo UCOM](assets/images/logo_ucom.png)
+> ![Logo UCOM](assets/logo_ucom.png)
 
 FinPay es una plantilla de aplicación Flutter moderna y personalizable, ideal para proyectos de banca, finanzas o billeteras digitales. Incluye gestión de temas, navegación, internacionalización y una arquitectura escalable basada en GetX.
 
