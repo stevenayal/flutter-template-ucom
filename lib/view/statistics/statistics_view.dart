@@ -2,7 +2,6 @@
 
 import 'package:finpay/config/images.dart';
 import 'package:finpay/config/textstyle.dart';
-import 'package:finpay/controller/currency_controller.dart';
 import 'package:finpay/controller/home_controller.dart';
 import 'package:finpay/view/home/widget/transaction_list.dart';
 import 'package:finpay/view/statistics/widget/card_view.dart';
@@ -20,8 +19,6 @@ class StatisticsView extends StatefulWidget {
 
 class _StatisticsViewState extends State<StatisticsView> {
   final homeController = Get.put(HomeController());
-  final currencyController = Get.put(CurrencyController());
-  
   @override
   void initState() {
     homeController.customInit();
@@ -56,7 +53,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                     ),
                   ),
                   Text(
-                    "statistics".tr,
+                    "Statistic",
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
@@ -78,7 +75,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "spending".tr,
+                          "Spending",
                           style:
                               Theme.of(context).textTheme.titleLarge!.copyWith(
                                     fontSize: 16,
@@ -91,36 +88,34 @@ class _StatisticsViewState extends State<StatisticsView> {
                                   ),
                         ),
                         const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Obx(() => Text(
-                                  currencyController.formatAmount(1691.54),
-                                  style: Theme.of(context)
+                        Row(children: [
+                          Text(
+                            "\$1,691.54",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "-3.1% from last month",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
-                                      .copyWith(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                )),
-                            const SizedBox(width: 10),
-                            Text(
-                              "from_last_month".tr,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .color!
-                                        .withOpacity(0.60),
-                                  ),
-                            ),
-                          ],
-                        ),
+                                      .color!
+                                      .withOpacity(0.60),
+                                ),
+                          ),
+                        ])
                       ],
                     ),
                   ),
@@ -147,7 +142,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                         homeController.isYear.value = false;
                       });
                     },
-                    "week".tr,
+                    "Week",
                   ),
                   cardView(
                     context,
@@ -166,7 +161,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                         homeController.isYear.value = false;
                       });
                     },
-                    "month".tr,
+                    "Month",
                   ),
                   cardView(
                     context,
@@ -185,7 +180,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                         homeController.isYear.value = true;
                       });
                     },
-                    "year".tr,
+                    "Year",
                   )
                 ],
               ),
@@ -226,7 +221,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                                               const EdgeInsets.only(right: 16),
                                           child: circleCard(
                                             context,
-                                            "food".tr,
+                                            "Food",
                                             HexColor(
                                                 AppTheme.primaryColorString!),
                                           ),
@@ -236,7 +231,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                                               const EdgeInsets.only(right: 16),
                                           child: circleCard(
                                             context,
-                                            "bills".tr,
+                                            "Bills",
                                             HexColor('#907FFA'),
                                           ),
                                         ),
@@ -245,7 +240,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                                               const EdgeInsets.only(right: 16),
                                           child: circleCard(
                                             context,
-                                            "gadget".tr,
+                                            "Gadget",
                                             HexColor('#CCCACF'),
                                           ),
                                         ),
@@ -254,7 +249,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                                               const EdgeInsets.only(right: 16),
                                           child: circleCard(
                                             context,
-                                            "food".tr,
+                                            "Food",
                                             HexColor(
                                                 AppTheme.primaryColorString!),
                                           ),
@@ -306,10 +301,10 @@ class _StatisticsViewState extends State<StatisticsView> {
                               children: [
                                 Text(
                                   homeController.isWeek.value == true
-                                      ? "this_week".tr
+                                      ? "This Week"
                                       : homeController.isMonth.value == true
-                                          ? "this_month".tr
-                                          : "this_year".tr,
+                                          ? "This Month"
+                                          : "This Year",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
@@ -319,7 +314,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                                       ),
                                 ),
                                 Text(
-                                  "view_all".tr,
+                                  "See all",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
