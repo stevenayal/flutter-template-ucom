@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:finpay/view/profile/chat_screen.dart';
 import 'package:finpay/view/profile/currency_settings_screen.dart';
+import 'package:finpay/view/profile/language_settings_screen.dart';
 import 'package:finpay/view/profile/privacy_screen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -186,9 +187,18 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.currency_exchange,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
+                      Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: HexColor(AppTheme.primaryColorString!)
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.currency_exchange,
+                          color: HexColor(AppTheme.primaryColorString!),
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Text(
@@ -201,8 +211,59 @@ class _SettingScreenState extends State<SettingScreen> {
                       const Spacer(),
                       Icon(
                         Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                        size: 15,
+                        color: Theme.of(context).textTheme.bodyMedium!.color,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LanguageSettingsScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.isLightTheme == false
+                        ? const Color(0xff323045)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: HexColor(AppTheme.primaryColorString!)
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.language,
+                          color: HexColor(AppTheme.primaryColorString!),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        "language_settings".tr,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Theme.of(context).textTheme.bodyMedium!.color,
+                        size: 16,
                       ),
                     ],
                   ),

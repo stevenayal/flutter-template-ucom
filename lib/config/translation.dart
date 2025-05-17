@@ -52,6 +52,8 @@ class Translation extends Translations {
           'cancel': 'Cancel',
           'overview': 'Overview',
           'get_more_benefits': 'Get more benefits',
+          'language_settings': 'Language Settings',
+          'select_language': 'Select Language',
         },
         'es_ES': {
           'settings': 'Configuración',
@@ -102,6 +104,8 @@ class Translation extends Translations {
           'cancel': 'Cancelar',
           'overview': 'Resumen',
           'get_more_benefits': 'Obtén más beneficios',
+          'language_settings': 'Configuración de Idioma',
+          'select_language': 'Seleccionar Idioma',
         },
       };
 } 

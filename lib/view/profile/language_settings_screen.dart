@@ -1,15 +1,14 @@
-import 'package:finpay/config/currency_config.dart';
 import 'package:finpay/config/textstyle.dart';
-import 'package:finpay/controller/currency_controller.dart';
+import 'package:finpay/controller/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CurrencySettingsScreen extends StatelessWidget {
-  const CurrencySettingsScreen({super.key});
+class LanguageSettingsScreen extends StatelessWidget {
+  const LanguageSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final currencyController = Get.put(CurrencyController());
+    final languageController = Get.put(LanguageController());
 
     return Scaffold(
       appBar: AppBar(
@@ -27,7 +26,7 @@ class CurrencySettingsScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          "currency_settings".tr,
+          "language_settings".tr,
           style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
@@ -46,7 +45,7 @@ class CurrencySettingsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "select_currency".tr,
+                "select_language".tr,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -57,7 +56,7 @@ class CurrencySettingsScreen extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          currencyController.changeCurrency(Currency.usd);
+                          languageController.changeLanguage('es_ES');
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 16),
@@ -68,7 +67,7 @@ class CurrencySettingsScreen extends StatelessWidget {
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: currencyController.selectedCurrency.value == Currency.usd
+                              color: languageController.currentLanguage.value == 'es_ES'
                                   ? HexColor(AppTheme.primaryColorString!)
                                   : Colors.transparent,
                               width: 2,
@@ -76,20 +75,8 @@ class CurrencySettingsScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                width: 32,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  image: const DecorationImage(
-                                    image: AssetImage('assets/images/flags/us_flag.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
                               Text(
-                                "usd".tr,
+                                "Español",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
@@ -99,7 +86,7 @@ class CurrencySettingsScreen extends StatelessWidget {
                                     ),
                               ),
                               const Spacer(),
-                              if (currencyController.selectedCurrency.value == Currency.usd)
+                              if (languageController.currentLanguage.value == 'es_ES')
                                 Icon(
                                   Icons.check_circle,
                                   color: HexColor(AppTheme.primaryColorString!),
@@ -110,7 +97,7 @@ class CurrencySettingsScreen extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          currencyController.changeCurrency(Currency.pyg);
+                          languageController.changeLanguage('en_US');
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 16),
@@ -121,7 +108,7 @@ class CurrencySettingsScreen extends StatelessWidget {
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: currencyController.selectedCurrency.value == Currency.pyg
+                              color: languageController.currentLanguage.value == 'en_US'
                                   ? HexColor(AppTheme.primaryColorString!)
                                   : Colors.transparent,
                               width: 2,
@@ -129,20 +116,8 @@ class CurrencySettingsScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                width: 32,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  image: const DecorationImage(
-                                    image: AssetImage('assets/images/flags/py_flag.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
                               Text(
-                                "pyg".tr,
+                                "English",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
@@ -152,7 +127,7 @@ class CurrencySettingsScreen extends StatelessWidget {
                                     ),
                               ),
                               const Spacer(),
-                              if (currencyController.selectedCurrency.value == Currency.pyg)
+                              if (languageController.currentLanguage.value == 'en_US')
                                 Icon(
                                   Icons.check_circle,
                                   color: HexColor(AppTheme.primaryColorString!),

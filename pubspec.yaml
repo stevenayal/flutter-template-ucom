@@ -70,7 +70,7 @@ flutter:
   assets:
     - assets/images/
     - assets/country_code.json
-    - flags/
+    - assets/images/flags/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

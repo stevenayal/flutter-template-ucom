@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:finpay/controller/language_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,12 +66,14 @@ class _MyAppState extends State<MyApp> {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
 
+    Get.put(LanguageController());
+
     return GetMaterialApp(
       title: 'FinPay',
       theme: AppTheme.getTheme(),
       debugShowCheckedModeBanner: false,
       translations: Translation(),
-      locale: const Locale('es', 'ES'), // Establecer español como idioma por defecto
+      locale: const Locale('es', 'ES'),
       fallbackLocale: const Locale('en', 'US'),
       home: const SplashScreen(),
     );
