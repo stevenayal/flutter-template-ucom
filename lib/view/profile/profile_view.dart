@@ -175,16 +175,16 @@ class _ProfileViewState extends State<ProfileView> {
                                   ),
                             ),
                             const SizedBox(height: 8),
-                            Obx(() => Text(
-                                  currencyController.formatAmount(5000),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                )),
+                            Text(
+                              currencyController.formatAmount(5000),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                            ),
                           ],
                         ),
                       ),
@@ -213,16 +213,16 @@ class _ProfileViewState extends State<ProfileView> {
                                   ),
                             ),
                             const SizedBox(height: 8),
-                            Obx(() => Text(
-                                  currencyController.formatAmount(2000),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                )),
+                            Text(
+                              currencyController.formatAmount(2000),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                            ),
                           ],
                         ),
                       ),
@@ -262,16 +262,16 @@ class _ProfileViewState extends State<ProfileView> {
                                   color: const Color(0xffA2A0A8),
                                 ),
                           ),
-                          Obx(() => Text(
-                                currencyController.formatAmount(3000),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                              )),
+                          Text(
+                            currencyController.formatAmount(3000),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
