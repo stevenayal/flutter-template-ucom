@@ -4,6 +4,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:finpay/config/images.dart';
 import 'package:finpay/config/textstyle.dart';
 import 'package:finpay/controller/home_controller.dart';
+import 'package:finpay/controller/currency_controller.dart';
 import 'package:finpay/view/home/top_up_screen.dart';
 import 'package:finpay/view/home/transfer_screen.dart';
 import 'package:finpay/view/home/widget/circle_card.dart';
@@ -12,11 +13,13 @@ import 'package:finpay/view/home/widget/transaction_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:finpay/config/currency_config.dart';
 
 class HomeView extends StatelessWidget {
   final HomeController homeController;
+  final CurrencyController currencyController = Get.put(CurrencyController());
 
-  const HomeView({super.key, required this.homeController});
+  HomeView({super.key, required this.homeController});
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +39,20 @@ class HomeView extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    Obx(() => Text(
                       "good_morning".tr,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w400,
                             color: Theme.of(context).textTheme.bodySmall!.color,
                           ),
-                    ),
-                    Text(
+                    )),
+                    Obx(() => Text(
                       "good_morning".tr,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 24,
                           ),
-                    ),
+                    )),
                   ],
                 ),
                 Row(
@@ -107,40 +110,48 @@ class HomeView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppTheme.isLightTheme == false
-                              ? HexColor('#15141f')
-                              : Theme.of(context).appBarTheme.backgroundColor,
-                          border: Border.all(
-                            color: HexColor(AppTheme.primaryColorString!)
-                                .withOpacity(0.05),
+                      Obx(() {
+                        final currency = currencyController.selectedCurrency.value;
+                        final flagAsset = currency == Currency.usd
+                            ? 'assets/images/flags/us_flag.png'
+                            : 'assets/images/flags/py_flag.png';
+                        final code = currency == Currency.usd ? 'USD' : 'PYG';
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.isLightTheme == false
+                                ? HexColor('#15141f')
+                                : Theme.of(context).appBarTheme.backgroundColor,
+                            border: Border.all(
+                              color: HexColor(AppTheme.primaryColorString!)
+                                  .withOpacity(0.05),
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Row(
-                            children: [
-                              customContainer(
-                                title: "USD",
-                                background: AppTheme.primaryColorString,
-                                textColor: Colors.white,
-                              ),
-                              const SizedBox(width: 5),
-                              customContainer(
-                                title: "IDR",
-                                background: AppTheme.isLightTheme == false
-                                    ? '#211F32'
-                                    : "#FFFFFF",
-                                textColor: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .color,
-                              )
-                            ],
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 32,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    image: DecorationImage(
+                                      image: AssetImage(flagAsset),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                customContainer(
+                                  title: code,
+                                  background: AppTheme.primaryColorString,
+                                  textColor: Colors.white,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                       Row(
                         children: [
                           Icon(
