@@ -2,8 +2,6 @@
 
 import 'package:finpay/config/images.dart';
 import 'package:finpay/controller/login_controller.dart';
-import 'package:finpay/view/login/otp_auth_screen.dart';
-import 'package:finpay/view/login/password_recovery_screen.dart';
 import 'package:finpay/view/signup/signup_screen.dart';
 import 'package:finpay/view/tab_screen.dart';
 import 'package:finpay/widgets/custom_button.dart';
@@ -13,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../config/textstyle.dart';
+import 'password_recovery_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -100,71 +99,105 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             const SizedBox(height: 30),
                             Obx(() {
-                              return CustomTextFormField(
-                                focusNode: _focusNodes[0],
-                                prefix: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: SvgPicture.asset(
-                                    DefaultImages.phone,
-                                    color: _focusNodes[0].hasFocus
-                                        ? HexColor(AppTheme.primaryColorString!)
-                                        : const Color(0xffA2A0A8),
-                                    // color:  HexColor(AppTheme.secondaryColorString!)
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomTextFormField(
+                                    focusNode: _focusNodes[0],
+                                    prefix: Padding(
+                                      padding: const EdgeInsets.all(14.0),
+                                      child: SvgPicture.asset(
+                                        DefaultImages.phone,
+                                        color: _focusNodes[0].hasFocus
+                                            ? HexColor(AppTheme.primaryColorString!)
+                                            : const Color(0xffA2A0A8),
+                                      ),
+                                    ),
+                                    hintText: "Celular",
+                                    inputType: TextInputType.phone,
+                                    textEditingController:
+                                        loginController.mobileController.value,
+                                    capitalization: TextCapitalization.none,
+                                    limit: [
+                                      LengthLimitingTextInputFormatter(10),
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
-                                ),
-                                hintText: "Celular",
-                                inputType: TextInputType.phone,
-                                textEditingController:
-                                    loginController.mobileController.value,
-                                capitalization: TextCapitalization.none,
-                                limit: [
-                                  LengthLimitingTextInputFormatter(10),
-                                  FilteringTextInputFormatter.digitsOnly
+                                  if (!loginController.isPhoneValid.value &&
+                                      loginController.mobileController.value.text.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0, left: 16.0),
+                                      child: Text(
+                                        "El número debe comenzar con 09 y tener 10 dígitos",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               );
                             }),
                             const SizedBox(height: 24),
                             Obx(() {
-                              return CustomTextFormField(
-                                focusNode: _focusNodes[1],
-                                sufix: InkWell(
-                                  focusColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  splashColor:
-                                      const Color.fromARGB(0, 78, 8, 8),
-                                  onTap: () {
-                                    loginController.isVisible.value =
-                                        !loginController.isVisible.value;
-                                  },
-                                  child: Padding(
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomTextFormField(
+                                    focusNode: _focusNodes[1],
+                                    sufix: InkWell(
+                                      focusColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      splashColor: Colors.transparent,
+                                      onTap: () {
+                                        loginController.isVisible.value =
+                                            !loginController.isVisible.value;
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(14.0),
+                                        child: Icon(
+                                          loginController.isVisible.value
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                          color: loginController.isVisible.value
+                                              ? HexColor(AppTheme.primaryColorString!)
+                                              : const Color(0xffA2A0A8),
+                                        ),
+                                      ),
+                                    ),
+                                    prefix: Padding(
                                       padding: const EdgeInsets.all(14.0),
                                       child: SvgPicture.asset(
-                                        DefaultImages.eye,
-                                      )),
-                                ),
-                                prefix: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: SvgPicture.asset(
-                                    DefaultImages.pswd,
-                                    color: _focusNodes[1].hasFocus
-                                        ? HexColor(AppTheme.primaryColorString!)
-                                        : const Color(0xffA2A0A8),
-                                    // color:  HexColor(AppTheme.secondaryColorString!)
+                                        DefaultImages.pswd,
+                                        color: _focusNodes[1].hasFocus
+                                            ? HexColor(AppTheme.primaryColorString!)
+                                            : const Color(0xffA2A0A8),
+                                      ),
+                                    ),
+                                    hintText: "Clave",
+                                    obscure: !loginController.isVisible.value,
+                                    textEditingController:
+                                        loginController.pswdController.value,
+                                    capitalization: TextCapitalization.none,
+                                    limit: [
+                                      FilteringTextInputFormatter.singleLineFormatter,
+                                    ],
+                                    inputType: TextInputType.visiblePassword,
                                   ),
-                                ),
-                                hintText: "Clave",
-                                obscure: loginController.isVisible.value == true
-                                    ? false
-                                    : true,
-                                textEditingController:
-                                    loginController.pswdController.value,
-                                capitalization: TextCapitalization.none,
-                                limit: [
-                                  FilteringTextInputFormatter
-                                      .singleLineFormatter,
+                                  if (!loginController.isPasswordValid.value &&
+                                      loginController.pswdController.value.text.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0, left: 16.0),
+                                      child: Text(
+                                        "La contraseña debe tener al menos 2 mayúsculas, minúsculas y un carácter especial",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                 ],
-                                inputType: TextInputType.visiblePassword,
                               );
                             }),
                             const SizedBox(height: 16),
@@ -174,14 +207,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               hoverColor: Colors.transparent,
                               splashColor: Colors.transparent,
                               onTap: () {
-                                print(loginController.mobileController.value
-                                    .toString());
-                                print(loginController.pswdController.value);
-                                /*  Get.to(
+                                Get.to(
                                   const PasswordRecoveryScreen(),
                                   transition: Transition.rightToLeft,
                                   duration: const Duration(milliseconds: 500),
-                                ); */
+                                );
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -194,39 +224,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                         .copyWith(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 16,
-                                          color: HexColor(
-                                              AppTheme.primaryColorString!),
+                                          color: HexColor(AppTheme.primaryColorString!),
                                         ),
                                   )
                                 ],
                               ),
                             ),
                             const SizedBox(height: 32),
-                            InkWell(
-                              focusColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              hoverColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: () {
-                                print(loginController
-                                    .mobileController.value.text);
-                                print(
-                                    loginController.pswdController.value.text);
-                                if (loginController
-                                    .pswdController.value.text.isNotEmpty) {
-                                  Get.to(
-                                    const TabScreen(),
-                                    transition: Transition.rightToLeft,
-                                    duration: const Duration(milliseconds: 500),
-                                  );
-                                }
-                              },
-                              child: customButton(
-                                  HexColor(AppTheme.primaryColorString!),
+                            Obx(() {
+                              return InkWell(
+                                focusColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                onTap: () {
+                                  if (loginController.isPhoneValid.value &&
+                                      loginController.isPasswordValid.value) {
+                                    Get.to(
+                                      const TabScreen(),
+                                      transition: Transition.rightToLeft,
+                                      duration: const Duration(milliseconds: 500),
+                                    );
+                                  }
+                                },
+                                child: customButton(
+                                  loginController.isPhoneValid.value &&
+                                          loginController.isPasswordValid.value
+                                      ? HexColor(AppTheme.primaryColorString!)
+                                      : Colors.grey,
                                   "Ingresar",
                                   HexColor(AppTheme.secondaryColorString!),
-                                  context),
-                            ),
+                                  context,
+                                ),
+                              );
+                            }),
                             InkWell(
                               focusColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -244,25 +275,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("¿No tienes una cuenta?",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                                color:
-                                                    const Color(0xff9CA3AF))),
-                                    Text(" Registrarse",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                              color: HexColor(
-                                                  AppTheme.primaryColorString!),
-                                            ))
+                                    Text(
+                                      "¿No tienes una cuenta?",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: const Color(0xffA2A0A8),
+                                          ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "Regístrate",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: HexColor(AppTheme.primaryColorString!),
+                                          ),
+                                    ),
                                   ],
                                 ),
                               ),
