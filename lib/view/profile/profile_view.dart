@@ -60,8 +60,7 @@ class ProfileView extends StatelessWidget {
                           },
                           child: Icon(
                             Icons.settings,
-                            color:
-                                Theme.of(context).textTheme.titleLarge!.color,
+                            color: Theme.of(context).textTheme.titleLarge!.color,
                             size: 25,
                           ),
                         )
@@ -80,7 +79,6 @@ class ProfileView extends StatelessWidget {
                                 DefaultImages.avatar,
                                 fit: BoxFit.fill,
                               ),
-<<<<<<< HEAD
                             ),
                             SizedBox(
                               height: 28,
@@ -111,8 +109,7 @@ class ProfileView extends StatelessWidget {
                               height: 28,
                               width: 116,
                               decoration: BoxDecoration(
-                                color:
-                                    const Color(0xffF6A609).withOpacity(0.10),
+                                color: const Color(0xffF6A609).withOpacity(0.10),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
@@ -140,9 +137,11 @@ class ProfileView extends StatelessWidget {
                         const Expanded(child: SizedBox()),
                         InkWell(
                           onTap: () {
-                            Get.to(const EditProfileScreen(),
-                                transition: Transition.downToUp,
-                                duration: const Duration(milliseconds: 500));
+                            Get.to(
+                              const EditProfileScreen(),
+                              transition: Transition.downToUp,
+                              duration: const Duration(milliseconds: 500),
+                            );
                           },
                           child: Text(
                             "Editar Perfil",
@@ -212,10 +211,9 @@ class ProfileView extends StatelessWidget {
                                     color: const Color(0xff52525C),
                                   ),
                             ),
-<<<<<<< HEAD
                             const SizedBox(height: 8),
                             Text(
-                              currencyController.formatAmount(5000),
+                              "\$5,000",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
@@ -228,391 +226,10 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppTheme.isLightTheme == false
-                              ? const Color(0xff323045)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-=======
-=======
-                            ),
-                            SizedBox(
-                              height: 28,
-                              width: 28,
-                              child: SvgPicture.asset(
-                                DefaultImages.camera,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 23),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Daniel Travis",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              height: 28,
-                              width: 116,
-                              decoration: BoxDecoration(
-                                color:
-                                    const Color(0xffF6A609).withOpacity(0.10),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Member Gold ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(
-                                          color: const Color(0xffF6A609),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
-                                  SvgPicture.asset(
-                                    DefaultImages.ranking,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Expanded(child: SizedBox()),
-                        InkWell(
-                          onTap: () {
-                            Get.to(const EditProfileScreen(),
-                                transition: Transition.downToUp,
-                                duration: const Duration(milliseconds: 500));
-                          },
-                          child: Text(
-                            "Editar Perfil",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: HexColor(AppTheme.primaryColorString!),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    Text(
-                      "Resumen",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        incomeContainer(
-                          context,
-                          "Ingresos Netos",
-                          "\$4,500",
-                          DefaultImages.income,
-                        ),
-                        const SizedBox(width: 16),
-                        incomeContainer(
-                          context,
-                          "Gastos",
-                          "\$1,691",
-                          DefaultImages.outcome,
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      height: 122,
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                        color: AppTheme.isLightTheme == false
-                            ? const Color(0xff323045)
-                            : HexColor(AppTheme.primaryColorString!)
-                                .withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Gastos esta semana",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xff52525C),
-                                  ),
-                            ),
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-                            Row(
-                              children: [
-                                Container(
-                                  height: 16,
-                                  width: (Get.width / 2) - 63.5,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        HexColor(AppTheme.primaryColorString!),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                Container(
-                                  height: 16,
-                                  width: (Get.width / 2) - 63.5,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        HexColor(AppTheme.primaryColorString!)
-                                            .withOpacity(0.10),
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(4),
-                                      topRight: Radius.circular(4),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Text(
-                                  "\$124",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                ),
-                              ],
-                            ),
-<<<<<<< HEAD
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-=======
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-                            Text(
-                              "\$124 left to spend",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: const Color(0xffA2A0A8),
-                                  ),
-                            ),
-<<<<<<< HEAD
-<<<<<<< HEAD
-                            const SizedBox(height: 8),
-                            Text(
-                              currencyController.formatAmount(2000),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge!
-                                  .copyWith(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                            ),
-=======
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-=======
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    InkWell(
-                      onTap: () {
-                        Get.to(
-                          const ChatScreen(),
-                          transition: Transition.downToUp,
-                          duration: const Duration(milliseconds: 500),
-                        );
-                      },
-                      child: SizedBox(
-                        height: 80,
-                        width: Get.width,
-                        child: SvgPicture.asset(
-                          AppTheme.isLightTheme == false
-                              ? DefaultImages.chatcsDark
-                              : DefaultImages.chatDialog,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 16),
-                      child: Text(
-                        "You joined Finpay on September 2021. It's been 1 month since then and our mission is still the same, help you better manage your finance.",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              height: 1.8,
-                              color: const Color(0xffA2A0A8),
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 50),
                   ],
                 ),
-<<<<<<< HEAD
-<<<<<<< HEAD
-                const SizedBox(height: 32),
-                Text(
-                  "weekly_spending".tr,
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                const SizedBox(height: 32),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "left_to_spend".tr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  fontSize: 14,
-                                  color: const Color(0xffA2A0A8),
-                                ),
-                          ),
-                          Text(
-                            currencyController.formatAmount(3000),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      LinearProgressIndicator(
-                        value: 0.7,
-                        backgroundColor: const Color(0xffE5E5E5),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          HexColor(AppTheme.primaryColorString!),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: HexColor(AppTheme.primaryColorString!),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.star,
-                            color: HexColor(AppTheme.primaryColorString!),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "member_gold".tr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                          ),
-                          Text(
-                            "get_more_benefits".tr,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(
-                                  fontSize: 14,
-                                  color: Colors.white.withOpacity(0.8),
-                                ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.white,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 32),
-              ],
-            ),
-=======
               ),
             ],
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-=======
-              ),
-            ],
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
           ),
         ),
       ),

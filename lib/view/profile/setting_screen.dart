@@ -12,16 +12,10 @@ import 'package:finpay/view/splash/splash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import 'package:finpay/view/profile/chat_screen.dart';
 import 'package:finpay/view/profile/currency_settings_screen.dart';
 import 'package:finpay/view/profile/language_settings_screen.dart';
 import 'package:finpay/view/profile/privacy_screen.dart';
-=======
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-=======
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -72,416 +66,6 @@ class _SettingScreenState extends State<SettingScreen> {
                         fontWeight: FontWeight.w800,
                       ),
                 ),
-<<<<<<< HEAD
-<<<<<<< HEAD
-              ),
-              const SizedBox(height: 22),
-              customRow(
-                context,
-                'reset_password'.tr,
-              ),
-              const SizedBox(height: 32),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.notifications_outlined,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "notifications".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CurrencySettingsScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: HexColor(AppTheme.primaryColorString!)
-                              .withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.currency_exchange,
-                          color: HexColor(AppTheme.primaryColorString!),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "currency_settings".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.bodyMedium!.color,
-                        size: 16,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LanguageSettingsScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: HexColor(AppTheme.primaryColorString!)
-                              .withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.language,
-                          color: HexColor(AppTheme.primaryColorString!),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "language_settings".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.bodyMedium!.color,
-                        size: 16,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PrivacyScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.lock_outline,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "privacy".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ChatScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.chat_outlined,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "chat_assistant".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Get.changeThemeMode(
-                    Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.dark_mode_outlined,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "dark_mode".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Switch(
-                        value: AppTheme.isLightTheme == false,
-                        onChanged: (value) {
-                          Get.changeThemeMode(
-                            Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Get.dialog(
-                    AlertDialog(
-                      title: Text("log_out".tr),
-                      content: Text("log_out_confirmation".tr),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          child: Text("cancel".tr),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Get.back();
-                            Get.offAllNamed('/login');
-                          },
-                          child: Text("log_out".tr),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.isLightTheme == false
-                        ? const Color(0xff323045)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.logout,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "log_out".tr,
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'follow_us'.tr,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xffA2A0A8),
-                    ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  socialView(
-                    AppTheme.isLightTheme == false
-                        ? DefaultImages.twitterdark
-                        : DefaultImages.twitter,
-                  ),
-                  socialView(
-                    AppTheme.isLightTheme == false
-                        ? DefaultImages.facebookDark
-                        : DefaultImages.facebook,
-                  ),
-                  socialView(
-                    AppTheme.isLightTheme == false
-                        ? DefaultImages.tiktokDark
-                        : DefaultImages.tikTok,
-                  ),
-                  socialView(
-                    AppTheme.isLightTheme == false
-                        ? DefaultImages.instagramDark
-                        : DefaultImages.instagram,
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  'version'.tr,
-=======
-                const SizedBox(height: 32),
-                Text(
-                  'general'.tr,
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-=======
-                const SizedBox(height: 32),
-                Text(
-                  'general'.tr,
->>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xffA2A0A8),
-                      ),
-                ),
-                const SizedBox(height: 16),
-                notificationView(
-                  context,
-                  'dark_mode'.tr,
-                  CupertinoSwitch(
-                    value: profileController.darkMode.value,
-                    activeColor: HexColor(AppTheme.primaryColorString!),
-                    onChanged: (v) {
-                      setState(() {
-                        profileController.darkMode.value = v;
-                        if (v == true) {
-                          changeColor(dark);
-                        } else {
-                          changeColor(light);
-                        }
-                      });
-                    },
-                  ),
-                ),
                 const SizedBox(height: 22),
                 customRow(
                   context,
@@ -490,100 +74,190 @@ class _SettingScreenState extends State<SettingScreen> {
                 const SizedBox(height: 32),
                 InkWell(
                   onTap: () {
-                    Get.to(
-                      const NotificationScreen(),
-                      transition: Transition.downToUp,
-                      duration: const Duration(milliseconds: 500),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
                     );
                   },
-                  child: customRow(
-                    context,
-                    'notifications'.tr,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.isLightTheme == false
+                          ? const Color(0xff323045)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.notifications_outlined,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          "notifications".tr,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
+                          size: 15,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 32),
-                customRow(
-                  context,
-                  'privacy_settings'.tr,
-                ),
-                const SizedBox(height: 32),
-                customRow(
-                  context,
-                  'help_center'.tr,
-                ),
-                const SizedBox(height: 32),
-                customRow(
-                  context,
-                  'contact_us'.tr,
-                ),
-                const SizedBox(height: 32),
                 InkWell(
                   onTap: () {
-                    Get.offAll(const SplashScreen());
-                  },
-                  child: customRow(
-                    context,
-                    'log_out'.tr,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Text(
-                  'follow_us'.tr,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xffA2A0A8),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CurrencySettingsScreen(),
                       ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    socialView(
-                      AppTheme.isLightTheme == false
-                          ? DefaultImages.twitterdark
-                          : DefaultImages.twitter,
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.isLightTheme == false
+                          ? const Color(0xff323045)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    socialView(
-                      AppTheme.isLightTheme == false
-                          ? DefaultImages.facebookDark
-                          : DefaultImages.facebook,
-                    ),
-                    socialView(
-                      AppTheme.isLightTheme == false
-                          ? DefaultImages.tiktokDark
-                          : DefaultImages.tikTok,
-                    ),
-                    socialView(
-                      AppTheme.isLightTheme == false
-                          ? DefaultImages.instagramDark
-                          : DefaultImages.instagram,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: Text(
-                    'log_out'.tr,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xffFB4E4E),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: HexColor(AppTheme.primaryColorString!)
+                                .withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.currency_exchange,
+                            color: HexColor(AppTheme.primaryColorString!),
+                          ),
                         ),
+                        const SizedBox(width: 16),
+                        Text(
+                          "currency_settings".tr,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
+                          size: 16,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Center(
-                  child: Text(
-                    'version'.tr,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xff9EA3AE),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LanguageSettingsScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.isLightTheme == false
+                          ? const Color(0xff323045)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: HexColor(AppTheme.primaryColorString!)
+                                .withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.language,
+                            color: HexColor(AppTheme.primaryColorString!),
+                          ),
                         ),
+                        const SizedBox(width: 16),
+                        Text(
+                          "language_settings".tr,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
+                          size: 16,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.isLightTheme == false
+                          ? const Color(0xff323045)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.lock_outline,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          "privacy_policy".tr,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
+                          size: 15,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
