@@ -190,7 +190,7 @@ class _WelcomeFirstScreenState extends State<WelcomeFirstScreen> {
                 hoverColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onTap: () {
-                  Get.offAll(const SignUpScreen());
+                  Get.offAll(const SignupScreen());
                 },
                 child: customButton(
                     AppTheme.isLightTheme == false

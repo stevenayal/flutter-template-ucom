@@ -6,8 +6,8 @@ import 'package:finpay/view/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:finpay/controller/language_controller.dart';
+import 'package:finpay/alumno/view/login/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
       translations: Translation(),
       locale: const Locale('es', 'ES'),
       fallbackLocale: const Locale('en', 'US'),
-      home: const SplashScreen(),
+      home: LoginScreen(),
     );
   }
 }

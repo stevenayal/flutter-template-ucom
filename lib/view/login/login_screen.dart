@@ -287,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
       splashColor: Colors.transparent,
       onTap: () {
         Get.to(
-          const SignUpScreen(),
+          const SignupScreen(),
           transition: Transition.rightToLeft,
           duration: const Duration(milliseconds: 500),
         );

@@ -7,19 +7,19 @@ import 'package:finpay/controller/home_controller.dart';
 import 'package:finpay/controller/reserva_controller.dart';
 import 'package:finpay/utils/utiles.dart';
 import 'package:finpay/view/home/top_up_screen.dart';
-import 'package:finpay/view/home/transfer_screen.dart';
 import 'package:finpay/view/home/widget/circle_card.dart';
 import 'package:finpay/view/home/widget/custom_card.dart';
-import 'package:finpay/view/home/widget/transaction_list.dart';
 import 'package:finpay/view/reservas/reservas_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../alumno/config/app_theme.dart' as theme;
+import '../../alumno/config/textstyle.dart' as text;
 
 class HomeView extends StatelessWidget {
   final HomeController homeController;
 
-  const HomeView({Key? key, required this.homeController}) : super(key: key);
+  const HomeView({super.key, required this.homeController});
 
   @override
   Widget build(BuildContext context) {
@@ -228,9 +228,7 @@ class HomeView extends StatelessWidget {
                         Get.to(
                           () => ReservaScreen(),
                           binding: BindingsBuilder(() {
-                            Get.delete<
-                                ReservaController>(); // 🔥 elimina instancia previa
-
+                            Get.delete<ReservaController>();
                             Get.create(() => ReservaController());
                           }),
                           transition: Transition.downToUp,

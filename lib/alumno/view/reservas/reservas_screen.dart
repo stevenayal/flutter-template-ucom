@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:finpay/controller/reserva_controller.dart';
-import 'package:finpay/model/sitema_reservas.dart';
-import 'package:finpay/utils/utiles.dart';
-import '../../alumno/config/app_theme.dart' as theme;
-import '../../alumno/config/textstyle.dart' as text;
-import '../../alumno/widgets/custom_button.dart';
+import '../controller/reserva_controller.dart';
+import '../model/sitema_reservas.dart';
+import '../utils/utiles.dart';
+import '../config/app_theme.dart' as theme;
+import '../config/textstyle.dart' as text;
+import '../widgets/custom_button.dart';
 
 class ReservaScreen extends StatelessWidget {
   final controller = Get.put(ReservaController());
@@ -26,7 +26,7 @@ class ReservaScreen extends StatelessWidget {
                 Text("Seleccionar auto",
                     style: text.AppTextStyle.textStyle16w600),
                 Obx(() {
-                  return DropdownButton<Auto>(
+                  return DropdownButton<Auto>( // Considerar usar CustomDropdown si se crea uno
                     isExpanded: true,
                     value: controller.autoSeleccionado.value,
                     hint: Text("Seleccionar auto"),
@@ -42,7 +42,7 @@ class ReservaScreen extends StatelessWidget {
                 SizedBox(height: theme.AppTheme.spacing),
                 Text("Seleccionar piso",
                     style: text.AppTextStyle.textStyle16w600),
-                DropdownButton<Piso>(
+                DropdownButton<Piso>( // Considerar usar CustomDropdown si se crea uno
                   isExpanded: true,
                   value: controller.pisoSeleccionado.value,
                   hint: Text("Seleccionar piso"),
@@ -217,7 +217,7 @@ class ReservaScreen extends StatelessWidget {
                         top: theme.AppTheme.spacing,
                         bottom: theme.AppTheme.smallSpacing),
                     child: Text(
-                      "Monto estimado: ₲${UtilesApp.formatearGuaranies(monto)}",
+                      "Monto estimado: ${UtilesApp.formatearGuaraniesConSimbolo(monto.toDouble())}", // Usando UtilesApp.formatearGuaraniesConSimbolo
                       style: text.AppTextStyle.textStyle16w600.copyWith(
                         color: theme.AppTheme.primaryColor,
                       ),
@@ -225,35 +225,37 @@ class ReservaScreen extends StatelessWidget {
                   );
                 }),
                 SizedBox(height: theme.AppTheme.largeSpacing),
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomButton(
-                    buttonText: "Confirmar Reserva",
-                    onPressed: () async {
-                      final confirmada = await controller.confirmarReserva();
-
-                      if (confirmada) {
-                        Get.snackbar(
-                          "Reserva",
-                          "Reserva realizada con éxito",
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: theme.AppTheme.primaryColor,
-                          colorText: Colors.white,
-                        );
-
-                        await Future.delayed(const Duration(milliseconds: 2000));
-                        Get.back();
-                      } else {
-                        Get.snackbar(
-                          "Error",
-                          "Verificá que todos los campos estén completos",
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: theme.AppTheme.errorColor,
-                          colorText: Colors.white,
-                        );
-                      }
-                    },
-                  ),
+                CustomButton(
+                  onPressed:
+                      controller.lugarSeleccionado.value != null &&
+                              controller.horarioInicio.value != null &&
+                              controller.horarioSalida.value != null &&
+                              controller.autoSeleccionado.value != null
+                          ? () async {
+                              final success =
+                                  await controller.confirmarReserva();
+                              if (success) {
+                                Get.snackbar(
+                                  'Reserva Exitosa',
+                                  'Tu lugar ha sido reservado.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                );
+                                controller.resetearCampos();
+                                // TODO: Navegar a pantalla de confirmación o reservas activas
+                              } else {
+                                Get.snackbar(
+                                  'Error al Reservar',
+                                  'No se pudo completar la reserva. Intenta de nuevo.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.redAccent,
+                                  colorText: Colors.white,
+                                );
+                              }
+                            }
+                          : null,
+                  buttonText: "Confirmar Reserva",
                 ),
               ],
             );
@@ -262,4 +264,4 @@ class ReservaScreen extends StatelessWidget {
       ),
     );
   }
-}
+} 
