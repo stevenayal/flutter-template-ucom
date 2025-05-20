@@ -13,10 +13,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import 'package:finpay/view/profile/chat_screen.dart';
 import 'package:finpay/view/profile/currency_settings_screen.dart';
 import 'package:finpay/view/profile/language_settings_screen.dart';
 import 'package:finpay/view/profile/privacy_screen.dart';
+=======
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 =======
 >>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 
@@ -69,6 +72,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         fontWeight: FontWeight.w800,
                       ),
                 ),
+<<<<<<< HEAD
 <<<<<<< HEAD
               ),
               const SizedBox(height: 22),
@@ -443,6 +447,11 @@ class _SettingScreenState extends State<SettingScreen> {
               Center(
                 child: Text(
                   'version'.tr,
+=======
+                const SizedBox(height: 32),
+                Text(
+                  'general'.tr,
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 =======
                 const SizedBox(height: 32),
                 Text(

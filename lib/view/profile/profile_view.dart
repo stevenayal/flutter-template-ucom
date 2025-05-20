@@ -80,6 +80,7 @@ class ProfileView extends StatelessWidget {
                                 DefaultImages.avatar,
                                 fit: BoxFit.fill,
                               ),
+<<<<<<< HEAD
                             ),
                             SizedBox(
                               height: 28,
@@ -241,6 +242,139 @@ class ProfileView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
 =======
+=======
+                            ),
+                            SizedBox(
+                              height: 28,
+                              width: 28,
+                              child: SvgPicture.asset(
+                                DefaultImages.camera,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 23),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Daniel Travis",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              height: 28,
+                              width: 116,
+                              decoration: BoxDecoration(
+                                color:
+                                    const Color(0xffF6A609).withOpacity(0.10),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Member Gold ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: const Color(0xffF6A609),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  SvgPicture.asset(
+                                    DefaultImages.ranking,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Expanded(child: SizedBox()),
+                        InkWell(
+                          onTap: () {
+                            Get.to(const EditProfileScreen(),
+                                transition: Transition.downToUp,
+                                duration: const Duration(milliseconds: 500));
+                          },
+                          child: Text(
+                            "Editar Perfil",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: HexColor(AppTheme.primaryColorString!),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      "Resumen",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        incomeContainer(
+                          context,
+                          "Ingresos Netos",
+                          "\$4,500",
+                          DefaultImages.income,
+                        ),
+                        const SizedBox(width: 16),
+                        incomeContainer(
+                          context,
+                          "Gastos",
+                          "\$1,691",
+                          DefaultImages.outcome,
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      height: 122,
+                      width: Get.width,
+                      decoration: BoxDecoration(
+                        color: AppTheme.isLightTheme == false
+                            ? const Color(0xff323045)
+                            : HexColor(AppTheme.primaryColorString!)
+                                .withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Gastos esta semana",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xff52525C),
+                                  ),
+                            ),
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
                             Row(
                               children: [
                                 Container(
@@ -278,6 +412,9 @@ class ProfileView extends StatelessWidget {
                                 ),
                               ],
                             ),
+<<<<<<< HEAD
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
+=======
 >>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
                             Text(
                               "\$124 left to spend",
@@ -291,6 +428,7 @@ class ProfileView extends StatelessWidget {
                                   ),
                             ),
 <<<<<<< HEAD
+<<<<<<< HEAD
                             const SizedBox(height: 8),
                             Text(
                               currencyController.formatAmount(2000),
@@ -302,6 +440,8 @@ class ProfileView extends StatelessWidget {
                                     fontWeight: FontWeight.w800,
                                   ),
                             ),
+=======
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 =======
 >>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
                           ],
@@ -345,6 +485,7 @@ class ProfileView extends StatelessWidget {
                     const SizedBox(height: 50),
                   ],
                 ),
+<<<<<<< HEAD
 <<<<<<< HEAD
                 const SizedBox(height: 32),
                 Text(
@@ -464,6 +605,10 @@ class ProfileView extends StatelessWidget {
                 const SizedBox(height: 32),
               ],
             ),
+=======
+              ),
+            ],
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 =======
               ),
             ],
