@@ -3,63 +3,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextFormField extends StatelessWidget {
-  final String? labelText;
-  final String hintText;
-  final TextEditingController textEditingController;
-  final Widget? sufix;
-  final Widget? prefix;
+  final TextEditingController? textEditingController;
+  final String? hintText;
+  final TextInputType? inputType;
   final bool obscure;
-  final FocusNode? focusNode;
+  final Widget? prefix;
+  final Widget? sufix;
   final List<TextInputFormatter>? limit;
   final TextCapitalization capitalization;
-  final TextInputType? inputType;
-  final bool? readOnly;
+  final FocusNode? focusNode;
+  final int? maxLines;
 
   const CustomTextFormField({
     super.key,
-    required this.hintText,
-    required this.textEditingController,
-    this.sufix,
-    this.prefix,
-    this.obscure = false,
-    this.limit,
-    this.labelText,
-    required this.capitalization,
+    this.textEditingController,
+    this.hintText,
     this.inputType,
-    this.readOnly = false,
+    this.obscure = false,
+    this.prefix,
+    this.sufix,
+    this.limit,
+    this.capitalization = TextCapitalization.none,
     this.focusNode,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 56,
+      height: maxLines == 1 ? 56 : null,
       decoration: BoxDecoration(
-          color: AppTheme.isLightTheme == false
-              ? const Color(0xff211F32)
-              : const Color(0xffF9F9FA),
-          borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5.0),
-        child: TextFormField(
-            controller: textEditingController,
-            obscureText: obscure,
-            focusNode: focusNode,
-            textCapitalization: capitalization,
-            keyboardType: inputType,
-            readOnly: readOnly!,
-            inputFormatters: limit,
-            decoration: InputDecoration(
-                prefixIcon: prefix,
-                suffixIcon: sufix,
-                labelText: labelText,
-
-                //   labelStyle: pRegular14,
-                hintText: hintText,
-                // hintStyle: pRegular14.copyWith(
-                //   color: ConstColors.textColor.withOpacity(0.5),
-                // ),
-                border: InputBorder.none)),
+        border: Border.all(color: const Color(0xffE8E8E8)),
+        borderRadius: BorderRadius.circular(16),
+        color: HexColor(AppTheme.secondaryColorString!),
+      ),
+      child: TextFormField(
+        focusNode: focusNode,
+        controller: textEditingController,
+        obscureText: obscure,
+        keyboardType: inputType,
+        textCapitalization: capitalization,
+        inputFormatters: limit,
+        maxLines: maxLines,
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+              color: AppTheme.isLightTheme == false
+                  ? const Color(0xffA2A0A8)
+                  : const Color(0xff211F32),
+            ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                color: const Color(0xffA2A0A8),
+              ),
+          prefixIcon: prefix,
+          suffixIcon: sufix,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        ),
       ),
     );
   }

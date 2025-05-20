@@ -65,11 +65,11 @@ class DefaultImages {
   static const String text = 'assets/images/FinPay.svg';
   static const String wc1 = 'assets/images/wlcm1.png';
   static const String wc2 = 'assets/images/wlcm2.png';
-  static const String phone = 'assets/images/call.svg';
-  static const String pswd = 'assets/images/Lock.svg';
-  static const String eye = 'assets/images/Eye Slash.svg';
-  static const String ggl = 'assets/images/Google icon.svg';
-  static const String userName = 'assets/images/userName.svg';
+  static const String phone = 'assets/images/phone.svg';
+  static const String pswd = 'assets/images/pswd.svg';
+  static const String eye = 'assets/images/eye.svg';
+  static const String ggl = 'assets/images/ggl.svg';
+  static const String userName = 'assets/images/user_name.svg';
   static const String identity = 'assets/images/identity.svg';
   static const String digitalDoc = 'assets/images/digital_doc.svg';
   static const String identityCard = 'assets/images/identity_card.svg';
@@ -93,4 +93,5 @@ class DefaultImages {
   static const String darkPhoto = 'assets/images/darkPhoto.svg';
   static const String darkGallery = 'assets/images/darkGallery.svg';
   static const String appLogo = 'assets/images/logo.png';
+  static const String car = 'assets/images/car.svg';
 }

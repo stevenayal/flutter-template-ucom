@@ -21,11 +21,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final signUpController = Get.put(SignUpController());
-  final List<FocusNode> _focusNodes = [
-    FocusNode(),
-    FocusNode(),
-    FocusNode(),
-  ];
+  final List<FocusNode> _focusNodes = List.generate(7, (_) => FocusNode());
 
   @override
   void initState() {
@@ -67,9 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     "Comenzar",
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -77,9 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           fontSize: 24,
                         ),
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
                   Text(
                     "¡Crea una cuenta para continuar!",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -88,346 +80,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: const Color(0xffA2A0A8),
                         ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Expanded(
                     child: ListView(
                       physics: const ClampingScrollPhysics(),
                       shrinkWrap: true,
                       children: [
-                        Column(
-                          children: [
-                            //   const SizedBox(height: 20),
-                            CustomTextFormField(
-                              focusNode: _focusNodes[0],
-                              prefix: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: SvgPicture.asset(
-                                  DefaultImages.userName,
-                                  color: _focusNodes[0].hasFocus
-                                      ? HexColor(AppTheme.primaryColorString!)
-                                      : const Color(0xffA2A0A8),
-                                  // color:  HexColor(AppTheme.secondaryColorString!)
-                                ),
-                              ),
-                              hintText: "Nombre Completo",
-                              inputType: TextInputType.text,
-                              textEditingController:
-                                  signUpController.nameController.value,
-                              capitalization: TextCapitalization.words,
-                              limit: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp('[a-zA-Z ]'))
-                              ],
-                            ),
-                            const SizedBox(height: 24),
-                            CustomTextFormField(
-                              focusNode: _focusNodes[1],
-                              prefix: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: SvgPicture.asset(
-                                  DefaultImages.phone,
-                                  color: _focusNodes[1].hasFocus
-                                      ? HexColor(AppTheme.primaryColorString!)
-                                      : const Color(0xffA2A0A8),
-                                  // color:  HexColor(AppTheme.secondaryColorString!)
-                                ),
-                              ),
-                              hintText: "Número de Teléfono",
-                              inputType: TextInputType.phone,
-                              textEditingController:
-                                  signUpController.mobileController.value,
-                              capitalization: TextCapitalization.none,
-                              limit: [
-                                LengthLimitingTextInputFormatter(10),
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                            const SizedBox(height: 24),
-                            Obx(() {
-                              return CustomTextFormField(
-                                focusNode: _focusNodes[2],
-                                sufix: InkWell(
-                                  focusColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    signUpController.isVisible.value =
-                                        !signUpController.isVisible.value;
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(14.0),
-                                    child: SvgPicture.asset(
-                                      DefaultImages.eye,
-                                      // color:  HexColor(AppTheme.secondaryColorString!)
-                                    ),
-                                  ),
-                                ),
-                                prefix: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: SvgPicture.asset(
-                                    DefaultImages.pswd,
-                                    color: _focusNodes[2].hasFocus
-                                        ? HexColor(AppTheme.primaryColorString!)
-                                        : const Color(0xffA2A0A8),
-                                    // color:  HexColor(AppTheme.secondaryColorString!)
-                                  ),
-                                ),
-                                hintText: "Contraseña",
-                                obscure:
-                                    signUpController.isVisible.value == true
-                                        ? false
-                                        : true,
-                                textEditingController:
-                                    signUpController.pswdController.value,
-                                capitalization: TextCapitalization.none,
-                                limit: [
-                                  FilteringTextInputFormatter
-                                      .singleLineFormatter,
-                                ],
-                                inputType: TextInputType.visiblePassword,
-                              );
-                            }),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InkWell(
-                                  focusColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    setState(() {
-                                      signUpController.isAgree.value =
-                                          !signUpController.isAgree.value;
-                                    });
-                                  },
-                                  child: Container(
-                                    height: 24,
-                                    width: 24,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: const Color(0xffDCDBE0)),
-                                        color: signUpController.isAgree.value
-                                            ? HexColor(
-                                                AppTheme.primaryColorString!)
-                                            : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: Icon(
-                                      Icons.check,
-                                      size: 15,
-                                      color: signUpController.isAgree.value
-                                          ? Colors.white
-                                          : Colors.transparent,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 16,
-                                ),
-                                Expanded(
-                                    child: RichText(
-                                  textAlign: TextAlign.left,
-                                  text: TextSpan(children: <TextSpan>[
-                                    TextSpan(
-                                      text:
-                                          "Al crear una cuenta, aceptas nuestros ",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color:
-                                                AppTheme.isLightTheme == false
-                                                    ? const Color(0xffA2A0A8)
-                                                    : const Color(0xff211F32),
-                                          ),
-                                    ),
-                                    TextSpan(
-                                        text: "Términos",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                                color: HexColor(AppTheme
-                                                    .primaryColorString!))),
-                                    TextSpan(
-                                      text: " y ",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color:
-                                                AppTheme.isLightTheme == false
-                                                    ? const Color(0xffA2A0A8)
-                                                    : const Color(0xff211F32),
-                                          ),
-                                    ),
-                                    TextSpan(
-                                        text: "Condiciones",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                                color: HexColor(AppTheme
-                                                    .primaryColorString!))),
-                                  ]),
-                                )
-                                    // Text(
-                                    //   "By creating an account, you aggree to our Terms and Conditions",
-                                    //   maxLines: 3,
-                                    //   style: Theme.of(context)
-                                    //       .textTheme
-                                    //       .bodyMedium!
-                                    //       .copyWith(
-                                    //         fontWeight: FontWeight.w500,
-                                    //         fontSize: 14,
-                                    //         color: Color(0xff211F32),
-                                    //       ),
-                                    // ),
-                                    )
-                              ],
-                            ),
-                            const SizedBox(height: 32),
-                            InkWell(
-                              focusColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              hoverColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: () {
-                                Get.to(
-                                  const CountryResidenceScreen(),
-                                  transition: Transition.rightToLeft,
-                                  duration: const Duration(milliseconds: 500),
-                                );
-                              },
-                              child: customButton(
-                                  HexColor(AppTheme.primaryColorString!),
-                                  "Sign Up",
-                                  HexColor(AppTheme.secondaryColorString!),
-                                  context),
-                            ),
-                            InkWell(
-                              focusColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              hoverColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: () {
-                                Get.to(
-                                  const LoginScreen(),
-                                  transition: Transition.rightToLeft,
-                                  duration: const Duration(milliseconds: 500),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 24),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("Already have an account? ",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                                color:
-                                                    const Color(0xff9CA3AF))),
-                                    Text(" Login",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                              color: HexColor(
-                                                  AppTheme.primaryColorString!),
-                                            ))
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: const Color(0xffE8E8E8),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 16.0, right: 16),
-                              child: Text("Or Continue with"),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: const Color(0xffE8E8E8),
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          height: 56,
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xffE8E8E8)),
-                            borderRadius: BorderRadius.circular(16),
-                            color: HexColor(AppTheme.secondaryColorString!),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 17.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: SvgPicture.asset(
-                                    DefaultImages.ggl,
-                                    //color:  HexColor(AppTheme.secondaryColorString!)
-                                  ),
-                                ),
-                                const Spacer(),
-                                InkWell(
-                                  focusColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {},
-                                  child: Text(
-                                    "Continue with Google",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16,
-                                          color: const Color(0xff15141F),
-                                        ),
-                                  ),
-                                ),
-                                const Spacer(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
+                        _buildCarDataSection(),
+                        const SizedBox(height: 24),
+                        _buildPersonalDataSection(),
+                        const SizedBox(height: 24),
+                        _buildTermsAndConditions(),
+                        const SizedBox(height: 32),
+                        _buildSignUpButton(context),
+                        _buildLoginButton(context),
                       ],
                     ),
                   ),
@@ -435,6 +101,329 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCarDataSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Datos del Auto",
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          focusNode: _focusNodes[0],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SvgPicture.asset(
+              DefaultImages.car,
+              color: _focusNodes[0].hasFocus
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : const Color(0xffA2A0A8),
+            ),
+          ),
+          hintText: "Marca del Auto",
+          inputType: TextInputType.text,
+          textEditingController: signUpController.brandController.value,
+          capitalization: TextCapitalization.words,
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          focusNode: _focusNodes[1],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SvgPicture.asset(
+              DefaultImages.car,
+              color: _focusNodes[1].hasFocus
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : const Color(0xffA2A0A8),
+            ),
+          ),
+          hintText: "Modelo del Auto",
+          inputType: TextInputType.text,
+          textEditingController: signUpController.modelController.value,
+          capitalization: TextCapitalization.words,
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          focusNode: _focusNodes[2],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SvgPicture.asset(
+              DefaultImages.car,
+              color: _focusNodes[2].hasFocus
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : const Color(0xffA2A0A8),
+            ),
+          ),
+          hintText: "Chapa del Auto",
+          inputType: TextInputType.text,
+          textEditingController: signUpController.plateController.value,
+          capitalization: TextCapitalization.characters,
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          focusNode: _focusNodes[3],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SvgPicture.asset(
+              DefaultImages.car,
+              color: _focusNodes[3].hasFocus
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : const Color(0xffA2A0A8),
+            ),
+          ),
+          hintText: "Observaciones (Color, Detalles, etc)",
+          inputType: TextInputType.text,
+          textEditingController: signUpController.observationsController.value,
+          capitalization: TextCapitalization.sentences,
+          maxLines: 3,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPersonalDataSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Datos Personales",
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          focusNode: _focusNodes[4],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SvgPicture.asset(
+              DefaultImages.userName,
+              color: _focusNodes[4].hasFocus
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : const Color(0xffA2A0A8),
+            ),
+          ),
+          hintText: "Nombre Completo",
+          inputType: TextInputType.text,
+          textEditingController: signUpController.nameController.value,
+          capitalization: TextCapitalization.words,
+          limit: [
+            FilteringTextInputFormatter.allow(RegExp('[a-zA-Z ]'))
+          ],
+        ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          focusNode: _focusNodes[5],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SvgPicture.asset(
+              DefaultImages.phone,
+              color: _focusNodes[5].hasFocus
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : const Color(0xffA2A0A8),
+            ),
+          ),
+          hintText: "+595 9XX XXX XXX",
+          inputType: TextInputType.phone,
+          textEditingController: signUpController.mobileController.value,
+          capitalization: TextCapitalization.none,
+          limit: [
+            LengthLimitingTextInputFormatter(12),
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Obx(() {
+          return CustomTextFormField(
+            focusNode: _focusNodes[6],
+            sufix: InkWell(
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () {
+                signUpController.isVisible.value = !signUpController.isVisible.value;
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Icon(
+                  signUpController.isVisible.value
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                  color: signUpController.isVisible.value
+                      ? HexColor(AppTheme.primaryColorString!)
+                      : const Color(0xffA2A0A8),
+                ),
+              ),
+            ),
+            prefix: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: SvgPicture.asset(
+                DefaultImages.pswd,
+                color: _focusNodes[6].hasFocus
+                    ? HexColor(AppTheme.primaryColorString!)
+                    : const Color(0xffA2A0A8),
+              ),
+            ),
+            hintText: "Contraseña",
+            obscure: !signUpController.isVisible.value,
+            textEditingController: signUpController.pswdController.value,
+            capitalization: TextCapitalization.none,
+            limit: [
+              FilteringTextInputFormatter.singleLineFormatter,
+            ],
+            inputType: TextInputType.visiblePassword,
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildTermsAndConditions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          focusColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            setState(() {
+              signUpController.isAgree.value = !signUpController.isAgree.value;
+            });
+          },
+          child: Container(
+            height: 24,
+            width: 24,
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xffDCDBE0)),
+              color: signUpController.isAgree.value
+                  ? HexColor(AppTheme.primaryColorString!)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.check,
+              size: 15,
+              color: signUpController.isAgree.value
+                  ? Colors.white
+                  : Colors.transparent,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                  text: "Al crear una cuenta, aceptas nuestros ",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: AppTheme.isLightTheme == false
+                            ? const Color(0xffA2A0A8)
+                            : const Color(0xff211F32),
+                      ),
+                ),
+                TextSpan(
+                  text: "Términos y Condiciones",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: HexColor(AppTheme.primaryColorString!),
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignUpButton(BuildContext context) {
+    return Obx(() {
+      return InkWell(
+        focusColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        onTap: () {
+          if (signUpController.isCarDataValid.value &&
+              signUpController.isPersonalDataValid.value &&
+              signUpController.isAgree.value) {
+            // TODO: Implementar lógica de registro
+            Get.to(
+              const LoginScreen(),
+              transition: Transition.rightToLeft,
+              duration: const Duration(milliseconds: 500),
+            );
+          }
+        },
+        child: customButton(
+          signUpController.isCarDataValid.value &&
+                  signUpController.isPersonalDataValid.value &&
+                  signUpController.isAgree.value
+              ? HexColor(AppTheme.primaryColorString!)
+              : Colors.grey,
+          "Registrarse",
+          HexColor(AppTheme.secondaryColorString!),
+          context,
+        ),
+      );
+    });
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return InkWell(
+      focusColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        Get.to(
+          const LoginScreen(),
+          transition: Transition.rightToLeft,
+          duration: const Duration(milliseconds: 500),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "¿Ya tienes una cuenta?",
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: const Color(0xffA2A0A8),
+                  ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              "Inicia sesión",
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: HexColor(AppTheme.primaryColorString!),
+                  ),
+            ),
+          ],
         ),
       ),
     );

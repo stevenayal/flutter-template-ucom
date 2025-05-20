@@ -1,64 +1,55 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
 //login
-  Rx<TextEditingController> mobileController = TextEditingController().obs;
-  Rx<TextEditingController> pswdController = TextEditingController().obs;
-  RxBool isVisible = false.obs;
-  RxBool isPasswordValid = false.obs;
-  RxBool isPhoneValid = false.obs;
+  final mobileController = TextEditingController().obs;
+  final pswdController = TextEditingController().obs;
+  final isVisible = false.obs;
+  final isPasswordValid = false.obs;
+  final isPhoneValid = false.obs;
 
-  // Validación de teléfono
-  bool validatePhone(String phone) {
-    // Verifica que comience con 09 y tenga 10 dígitos
-    final phoneRegex = RegExp(r'^09\d{8}$');
-    return phoneRegex.hasMatch(phone);
+  void validatePhone(String value) {
+    // Validar que el número comience con +595 y tenga 12 dígitos en total
+    final phoneRegex = RegExp(r'^\+595[0-9]{8}$');
+    isPhoneValid.value = phoneRegex.hasMatch(value);
   }
 
-  // Validación de contraseña
-  bool validatePassword(String password) {
-    // Verifica que tenga al menos 2 mayúsculas
-    final upperCaseRegex = RegExp(r'[A-Z]');
-    final upperCaseCount = upperCaseRegex.allMatches(password).length;
+  void validatePassword(String value) {
+    // Validar que la contraseña tenga al menos:
+    // - 2 letras mayúsculas
+    // - 1 letra minúscula
+    // - 1 carácter especial
+    final hasUpperCase = RegExp(r'[A-Z]').allMatches(value).length >= 2;
+    final hasLowerCase = RegExp(r'[a-z]').hasMatch(value);
+    final hasSpecialChar = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value);
     
-    // Verifica que tenga minúsculas
-    final lowerCaseRegex = RegExp(r'[a-z]');
-    final hasLowerCase = lowerCaseRegex.hasMatch(password);
-    
-    // Verifica que tenga al menos un carácter especial
-    final specialCharRegex = RegExp(r'[!@#\$%\^&\*(),.?":{}|<>]');
-    final hasSpecialChar = specialCharRegex.hasMatch(password);
-
-    return upperCaseCount >= 2 && hasLowerCase && hasSpecialChar;
+    isPasswordValid.value = hasUpperCase && hasLowerCase && hasSpecialChar;
   }
 
-  // Actualiza el estado de validación del teléfono
-  void updatePhoneValidation(String phone) {
-    isPhoneValid.value = validatePhone(phone);
+  void updatePasswordValidation() {
+    validatePassword(pswdController.value.text);
   }
 
-  // Actualiza el estado de validación de la contraseña
-  void updatePasswordValidation(String password) {
-    isPasswordValid.value = validatePassword(password);
+  void updatePhoneValidation() {
+    validatePhone(mobileController.value.text);
   }
 
   @override
   void onInit() {
     super.onInit();
     // Agregar listeners para validación en tiempo real
-    mobileController.value.addListener(() {
-      updatePhoneValidation(mobileController.value.text);
-    });
-    pswdController.value.addListener(() {
-      updatePasswordValidation(pswdController.value.text);
-    });
+    pswdController.value.addListener(updatePasswordValidation);
+    mobileController.value.addListener(updatePhoneValidation);
   }
 
   @override
   void onClose() {
-    mobileController.value.dispose();
+    // Limpiar listeners y controladores
+    pswdController.value.removeListener(updatePasswordValidation);
+    mobileController.value.removeListener(updatePhoneValidation);
     pswdController.value.dispose();
+    mobileController.value.dispose();
     super.onClose();
   }
 }

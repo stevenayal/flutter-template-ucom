@@ -132,13 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Color(0xffA2A0A8),
               ),
             ),
-            hintText: "Celular",
+            hintText: "+595 9XX XXX XXX",
             inputType: TextInputType.phone,
             textEditingController: loginController.mobileController.value,
             capitalization: TextCapitalization.none,
             limit: [
-              LengthLimitingTextInputFormatter(10),
-              FilteringTextInputFormatter.digitsOnly
+              LengthLimitingTextInputFormatter(12),
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
             ],
           ),
           if (!loginController.isPhoneValid.value &&
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 16.0),
               child: Text(
-                "El número debe comenzar con 09 y tener 10 dígitos",
+                "El número debe comenzar con +595 y tener 8 dígitos después",
                 style: const TextStyle(
                   color: Colors.red,
                   fontSize: 12,
