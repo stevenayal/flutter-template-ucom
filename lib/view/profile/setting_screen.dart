@@ -12,10 +12,13 @@ import 'package:finpay/view/splash/splash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+<<<<<<< HEAD
 import 'package:finpay/view/profile/chat_screen.dart';
 import 'package:finpay/view/profile/currency_settings_screen.dart';
 import 'package:finpay/view/profile/language_settings_screen.dart';
 import 'package:finpay/view/profile/privacy_screen.dart';
+=======
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -51,73 +54,22 @@ class _SettingScreenState extends State<SettingScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppTheme.isLightTheme == false
-            ? HexColor('#15141f')
-            : Theme.of(context).appBarTheme.backgroundColor,
-        elevation: 0,
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).textTheme.titleLarge!.color,
-          ),
-        ),
-        title: Text(
-          "settings".tr,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-        ),
-      ),
-      body: Container(
-        height: Get.height,
-        width: Get.width,
-        color: AppTheme.isLightTheme == false
-            ? HexColor('#15141f')
-            : Theme.of(context).appBarTheme.backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "settings".tr,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                    ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'general'.tr,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xffA2A0A8),
-                    ),
-              ),
-              const SizedBox(height: 16),
-              notificationView(
-                context,
-                'dark_mode'.tr,
-                CupertinoSwitch(
-                  value: profileController.darkMode.value,
-                  activeColor: HexColor(AppTheme.primaryColorString!),
-                  onChanged: (v) {
-                    setState(() {
-                      profileController.darkMode.value = v;
-                      if (v == true) {
-                        changeColor(dark);
-                      } else {
-                        changeColor(light);
-                      }
-                    });
-                  },
+          padding: const EdgeInsets.only(left: 24, right: 24),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'settings'.tr,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
+<<<<<<< HEAD
               ),
               const SizedBox(height: 22),
               customRow(
@@ -491,15 +443,140 @@ class _SettingScreenState extends State<SettingScreen> {
               Center(
                 child: Text(
                   'version'.tr,
+=======
+                const SizedBox(height: 32),
+                Text(
+                  'general'.tr,
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xff9EA3AE),
+                        color: const Color(0xffA2A0A8),
                       ),
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 16),
+                notificationView(
+                  context,
+                  'dark_mode'.tr,
+                  CupertinoSwitch(
+                    value: profileController.darkMode.value,
+                    activeColor: HexColor(AppTheme.primaryColorString!),
+                    onChanged: (v) {
+                      setState(() {
+                        profileController.darkMode.value = v;
+                        if (v == true) {
+                          changeColor(dark);
+                        } else {
+                          changeColor(light);
+                        }
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 22),
+                customRow(
+                  context,
+                  'reset_password'.tr,
+                ),
+                const SizedBox(height: 32),
+                InkWell(
+                  onTap: () {
+                    Get.to(
+                      const NotificationScreen(),
+                      transition: Transition.downToUp,
+                      duration: const Duration(milliseconds: 500),
+                    );
+                  },
+                  child: customRow(
+                    context,
+                    'notifications'.tr,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                customRow(
+                  context,
+                  'privacy_settings'.tr,
+                ),
+                const SizedBox(height: 32),
+                customRow(
+                  context,
+                  'help_center'.tr,
+                ),
+                const SizedBox(height: 32),
+                customRow(
+                  context,
+                  'contact_us'.tr,
+                ),
+                const SizedBox(height: 32),
+                InkWell(
+                  onTap: () {
+                    Get.offAll(const SplashScreen());
+                  },
+                  child: customRow(
+                    context,
+                    'log_out'.tr,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  'follow_us'.tr,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xffA2A0A8),
+                      ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    socialView(
+                      AppTheme.isLightTheme == false
+                          ? DefaultImages.twitterdark
+                          : DefaultImages.twitter,
+                    ),
+                    socialView(
+                      AppTheme.isLightTheme == false
+                          ? DefaultImages.facebookDark
+                          : DefaultImages.facebook,
+                    ),
+                    socialView(
+                      AppTheme.isLightTheme == false
+                          ? DefaultImages.tiktokDark
+                          : DefaultImages.tikTok,
+                    ),
+                    socialView(
+                      AppTheme.isLightTheme == false
+                          ? DefaultImages.instagramDark
+                          : DefaultImages.instagram,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: Text(
+                    'log_out'.tr,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xffFB4E4E),
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    'version'.tr,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xff9EA3AE),
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

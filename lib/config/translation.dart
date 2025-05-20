@@ -36,6 +36,7 @@ class Translation extends Translations {
           'can_help': 'I can help you with that',
           'introducing_card': 'Introducing Finpay card! 🎉',
           'smart_card': 'A smart debit and credit card that can help save more money! 💳',
+<<<<<<< HEAD
           'currency_settings': 'Currency Settings',
           'select_currency': 'Select Currency',
           'usd': 'US Dollar',
@@ -66,6 +67,8 @@ class Translation extends Translations {
           'statistics': 'Statistics',
           'card': 'Card',
           'profile': 'Profile',
+=======
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
         },
         'es_ES': {
           'settings': 'Configuración',
@@ -100,6 +103,7 @@ class Translation extends Translations {
           'can_help': 'Puedo ayudarte con eso',
           'introducing_card': '¡Presentando la tarjeta Finpay! 🎉',
           'smart_card': '¡Una tarjeta de débito y crédito inteligente que puede ayudarte a ahorrar más dinero! 💳',
+<<<<<<< HEAD
           'currency_settings': 'Configuración de Moneda',
           'select_currency': 'Seleccionar Moneda',
           'usd': 'Dólar Estadounidense',
@@ -130,6 +134,8 @@ class Translation extends Translations {
           'statistics': 'Estadísticas',
           'card': 'Tarjeta',
           'profile': 'Perfil',
+=======
+>>>>>>> parent of 790b0a8 (politica de privacidad y manejo de monedas USD y PYG)
         },
       };
 } 
