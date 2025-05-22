@@ -1,23 +1,115 @@
 // Archivo del alumno
 // Este archivo es parte del trabajo realizado por el alumno y puede contener modificaciones.
 
-import 'package:finpay/model/sitema_reservas.dart';
 import 'package:get/get.dart';
-import 'package:finpay/api/local.db.service.dart';
+import '../model/sistema_reservas.dart';
+import '../api/local.db.service.dart';
 
-class ReservaController extends GetxController {
-  RxList<Piso> pisos = <Piso>[].obs;
-  Rx<Piso?> pisoSeleccionado = Rx<Piso?>(null);
-  RxList<Lugar> lugaresDisponibles = <Lugar>[].obs;
-  Rx<Lugar?> lugarSeleccionado = Rx<Lugar?>(null);
-  Rx<DateTime?> horarioInicio = Rx<DateTime?>(null);
-  Rx<DateTime?> horarioSalida = Rx<DateTime?>(null);
-  RxInt duracionSeleccionada = 0.obs;
+class AlumnoReservaController extends GetxController {
+  final autoSeleccionado = Rxn<Auto>();
+  final pisoSeleccionado = Rxn<Piso>();
+  final lugarSeleccionado = Rxn<Lugar>();
+  final horarioInicio = Rxn<DateTime>();
+  final horarioSalida = Rxn<DateTime>();
+  final duracionSeleccionada = 0.obs;
+  final isLoading = false.obs;
+
+  // Datos de ejemplo
+  final autosCliente = <Auto>[
+    Auto(
+      chapa: 'TTEGTR',
+      marca: 'Nissan',
+      modelo: 'Skyline GT-R R34',
+      chasis: 'BNR34',
+      clienteId: 'cliente_1',
+    ),
+    Auto(
+      chapa: '2JZSUP',
+      marca: 'Toyota',
+      modelo: 'Supra MK4',
+      chasis: 'JZA80',
+      clienteId: 'cliente_1',
+    ),
+    Auto(
+      chapa: 'RX7FD',
+      marca: 'Mazda',
+      modelo: 'RX-7 FD',
+      chasis: 'FD3S',
+      clienteId: 'cliente_1',
+    ),
+     Auto(
+      chapa: 'EVO9',
+      marca: 'Mitsubishi',
+      modelo: 'Lancer Evolution IX',
+      chasis: 'CT9A',
+      clienteId: 'cliente_1',
+    ),
+      Auto(
+      chapa: 'GDISTI',
+      marca: 'Subaru',
+      modelo: 'Impreza WRX STI (GD)',
+      chasis: 'GDB',
+      clienteId: 'cliente_1',
+    ),
+  ].obs;
+
+  final pisos = <Piso>[
+    Piso(
+      codigo: 'P1',
+      descripcion: 'Piso 1',
+      lugares: [
+        Lugar(
+          codigoLugar: 'A1',
+          codigoPiso: 'P1',
+          estado: 'DISPONIBLE',
+          descripcionLugar: 'Lugar A1',
+        ),
+        Lugar(
+          codigoLugar: 'A2',
+          codigoPiso: 'P1',
+          estado: 'RESERVADO',
+          descripcionLugar: 'Lugar A2',
+        ),
+      ],
+    ),
+    Piso(
+      codigo: 'P2',
+      descripcion: 'Piso 2',
+      lugares: [
+        Lugar(
+          codigoLugar: 'B1',
+          codigoPiso: 'P2',
+          estado: 'DISPONIBLE',
+          descripcionLugar: 'Lugar B1',
+        ),
+      ],
+    ),
+  ].obs;
+
+  final lugaresDisponibles = <Lugar>[
+    Lugar(
+      codigoLugar: 'A1',
+      codigoPiso: 'P1',
+      estado: 'DISPONIBLE',
+      descripcionLugar: 'Lugar A1',
+    ),
+    Lugar(
+      codigoLugar: 'A2',
+      codigoPiso: 'P1',
+      estado: 'RESERVADO',
+      descripcionLugar: 'Lugar A2',
+    ),
+    Lugar(
+      codigoLugar: 'B1',
+      codigoPiso: 'P2',
+      estado: 'DISPONIBLE',
+      descripcionLugar: 'Lugar B1',
+    ),
+  ].obs;
+
   final db = LocalDBService();
-  RxList<Auto> autosCliente = <Auto>[].obs;
-  Rx<Auto?> autoSeleccionado = Rx<Auto?>(null);
-  String codigoClienteActual =
-      'cliente_1'; // ← este puede venir de login o contexto
+  String codigoClienteActual = 'cliente_1';
+
   @override
   void onInit() {
     super.onInit();
@@ -55,65 +147,28 @@ class ReservaController extends GetxController {
     }).toList();
   }
 
-  Future<void> seleccionarPiso(Piso piso) {
+  void seleccionarPiso(Piso piso) {
     pisoSeleccionado.value = piso;
     lugarSeleccionado.value = null;
-
-    // filtrar lugares de este piso
-    lugaresDisponibles.refresh();
-    return Future.value();
   }
 
   Future<bool> confirmarReserva() async {
-    if (pisoSeleccionado.value == null ||
-        lugarSeleccionado.value == null ||
+    if (lugarSeleccionado.value == null ||
         horarioInicio.value == null ||
-        horarioSalida.value == null) {
+        horarioSalida.value == null ||
+        autoSeleccionado.value == null) {
       return false;
     }
 
-    final duracionEnHoras =
-        horarioSalida.value!.difference(horarioInicio.value!).inMinutes / 60;
-
-    if (duracionEnHoras <= 0) return false;
-
-    final montoCalculado = (duracionEnHoras * 10000).roundToDouble();
-
-    if (autoSeleccionado.value == null) return false;
-
-    final nuevaReserva = Reserva(
-      codigoReserva: "RES-${DateTime.now().millisecondsSinceEpoch}",
-      horarioInicio: horarioInicio.value!,
-      horarioSalida: horarioSalida.value!,
-      monto: montoCalculado,
-      estadoReserva: "PENDIENTE",
-      chapaAuto: autoSeleccionado.value!.chapa,
-    );
-
-    try {
-      // Guardar la reserva
-      final reservas = await db.getAll("reservas.json");
-      reservas.add(nuevaReserva.toJson());
-      await db.saveAll("reservas.json", reservas);
-
-      // Marcar el lugar como reservado
-      final lugares = await db.getAll("lugares.json");
-      final index = lugares.indexWhere(
-        (l) => l['codigoLugar'] == lugarSeleccionado.value!.codigoLugar,
-      );
-      if (index != -1) {
-        lugares[index]['estado'] = "RESERVADO";
-        await db.saveAll("lugares.json", lugares);
-      }
-
-      return true;
-    } catch (e) {
-      print("Error al guardar reserva: $e");
-      return false;
-    }
+    isLoading.value = true;
+    // Simular llamada a API
+    await Future.delayed(const Duration(seconds: 2));
+    isLoading.value = false;
+    return true;
   }
 
   void resetearCampos() {
+    autoSeleccionado.value = null;
     pisoSeleccionado.value = null;
     lugarSeleccionado.value = null;
     horarioInicio.value = null;

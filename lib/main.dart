@@ -8,15 +8,17 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:finpay/controller/language_controller.dart';
 import 'package:finpay/alumno/view/login/login_screen.dart';
+import 'package:finpay/view/tab_screen.dart';
+import 'package:finpay/view/signup/signup_screen.dart';
+import 'package:finpay/view/login/password_recovery_screen.dart';
+import 'package:finpay/alumno/view/reservas/reservas_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor:
-            Colors.transparent //or set color with: Color(0xFF0000FF)
-        ),
+        systemNavigationBarColor: Colors.transparent),
   );
 
   SystemChrome.setPreferredOrientations([
@@ -34,7 +36,6 @@ class MyApp extends StatefulWidget {
 
   static setCustomeTheme(BuildContext context, int index) async {
     final _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-
     state!.setCustomeTheme(index);
   }
 
@@ -75,7 +76,15 @@ class _MyAppState extends State<MyApp> {
       translations: Translation(),
       locale: const Locale('es', 'ES'),
       fallbackLocale: const Locale('en', 'US'),
-      home: LoginScreen(),
+      initialRoute: '/',
+      getPages: [
+        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/login', page: () => LoginScreen()),
+        GetPage(name: '/home', page: () => const TabScreen()),
+        GetPage(name: '/signup', page: () => const SignupScreen()),
+        GetPage(name: '/password-recovery', page: () => const PasswordRecoveryScreen()),
+        GetPage(name: '/reserva', page: () => AlumnoReservaScreen()),
+      ],
     );
   }
 }

@@ -9,12 +9,10 @@ import 'package:finpay/utils/utiles.dart';
 import 'package:finpay/view/home/top_up_screen.dart';
 import 'package:finpay/view/home/widget/circle_card.dart';
 import 'package:finpay/view/home/widget/custom_card.dart';
-import 'package:finpay/view/reservas/reservas_screen.dart';
+import 'package:finpay/alumno/view/reservas/reservas_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import '../../alumno/config/app_theme.dart' as theme;
-import '../../alumno/config/textstyle.dart' as text;
 
 class HomeView extends StatelessWidget {
   final HomeController homeController;
@@ -226,7 +224,7 @@ class HomeView extends StatelessWidget {
                       splashColor: Colors.transparent,
                       onTap: () {
                         Get.to(
-                          () => ReservaScreen(),
+                          () => AlumnoReservaScreen(),
                           binding: BindingsBuilder(() {
                             Get.delete<ReservaController>();
                             Get.create(() => ReservaController());

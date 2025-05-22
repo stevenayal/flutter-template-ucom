@@ -9,37 +9,58 @@ class LoginController extends GetxController {
   final passwordController = TextEditingController();
   
   final isPasswordVisible = false.obs;
-  final isPhoneValid = true.obs; // Siempre válido
-  final isPasswordValid = true.obs; // Siempre válido
-  final isFormValid = true.obs; // Siempre válido
+  final isPhoneValid = false.obs;
+  final isPasswordValid = false.obs;
+  final isFormValid = false.obs;
+  final isLoading = false.obs;
 
   void validatePhone(String value) {
-    // Validación eliminada
-    isPhoneValid.value = true;
+    // Validar que el número tenga 9 dígitos y comience con 9
+    if (value.length == 9 && value.startsWith('9')) {
+      isPhoneValid.value = true;
+    } else {
+      isPhoneValid.value = false;
+    }
     validateForm();
   }
 
   void validatePassword(String value) {
-    // Validación eliminada
-    isPasswordValid.value = true;
+    // Validar que la contraseña tenga al menos 6 caracteres
+    isPasswordValid.value = value.length >= 6;
     validateForm();
   }
 
   void validateForm() {
-    // La forma siempre es válida al eliminar validaciones
-    isFormValid.value = true;
+    isFormValid.value = isPhoneValid.value && isPasswordValid.value;
   }
 
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Ya no es necesario añadir listeners si no hay validación
-    // phoneController.addListener(() => validatePhone(phoneController.text));
-    // passwordController.addListener(() => validatePassword(passwordController.text));
+  Future<void> login() async {
+    if (!isFormValid.value) return;
+
+    try {
+      isLoading.value = true;
+      
+      // Aquí iría la llamada a tu API de autenticación
+      // Por ahora simulamos un delay
+      await Future.delayed(const Duration(seconds: 2));
+      
+      // Simular login exitoso
+      // En un caso real, aquí guardarías el token y datos del usuario
+      Get.offAllNamed('/home'); // Navegar a la pantalla principal
+      
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Error al iniciar sesión. Por favor, intente nuevamente.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

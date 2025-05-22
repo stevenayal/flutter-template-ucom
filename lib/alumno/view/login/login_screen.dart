@@ -13,7 +13,7 @@ import '../../config/textstyle.dart' as text;
 // Consider importing custom widgets from alumno if applicable (CustomTextField, CustomButton)
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({super.key});
 
   final controller = Get.put(LoginController());
 
@@ -57,7 +57,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: theme.AppTheme.spacing * 2),
-              TextField(
+              Obx(() => TextField(
                 controller: controller.phoneController,
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
@@ -69,35 +69,37 @@ class LoginScreen extends StatelessWidget {
                   labelText: 'Teléfono',
                   prefixIcon: Icon(Icons.phone, color: theme.AppTheme.primaryColor),
                   hintText: '9XXXXXXXX',
-                  errorText: controller.isPhoneValid.value || controller.phoneController.text.isEmpty ? null : 'Número inválido (ej: 9XXXXXXXX)',
+                  errorText: controller.isPhoneValid.value || controller.phoneController.text.isEmpty 
+                    ? null 
+                    : 'Número inválido (ej: 9XXXXXXXX)',
                 ),
-              ),
+              )),
               SizedBox(height: theme.AppTheme.spacing),
               Obx(() => TextField(
-                    controller: controller.passwordController,
-                    obscureText: !controller.isPasswordVisible.value,
-                    onChanged: (value) => controller.validatePassword(value),
-                    decoration: theme.AppTheme.textFieldDecoration.copyWith(
-                      labelText: 'Contraseña',
-                      prefixIcon: Icon(Icons.lock_outline, color: theme.AppTheme.primaryColor),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          controller.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
-                          color: theme.AppTheme.primaryColor,
-                        ),
-                        onPressed: controller.togglePasswordVisibility,
-                      ),
-                      errorText: controller.isPasswordValid.value || controller.passwordController.text.isEmpty ? null : 'Contraseña inválida',
+                controller: controller.passwordController,
+                obscureText: !controller.isPasswordVisible.value,
+                onChanged: (value) => controller.validatePassword(value),
+                decoration: theme.AppTheme.textFieldDecoration.copyWith(
+                  labelText: 'Contraseña',
+                  prefixIcon: Icon(Icons.lock_outline, color: theme.AppTheme.primaryColor),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      controller.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                      color: theme.AppTheme.primaryColor,
                     ),
-                  )),
+                    onPressed: controller.togglePasswordVisibility,
+                  ),
+                  errorText: controller.isPasswordValid.value || controller.passwordController.text.isEmpty 
+                    ? null 
+                    : 'La contraseña debe tener al menos 6 caracteres',
+                ),
+              )),
               SizedBox(height: theme.AppTheme.largeSpacing),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Check if PasswordRecoveryScreen exists in alumno or needs a different import/handling
-                    // Get.to(() => PasswordRecoveryScreen()); // Original line - re-evaluate path
-                    print('Password Recovery button pressed'); // Placeholder for now
+                    Get.toNamed('/password-recovery');
                   },
                   child: Text(
                     '¿Olvidaste tu contraseña?',
@@ -109,22 +111,33 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: theme.AppTheme.largeSpacing),
               Obx(() => ElevatedButton(
-                    onPressed: controller.isFormValid.value ? () => Get.toNamed('/main') : null,
-                    style: theme.AppTheme.primaryButtonStyle.copyWith(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.disabled)) {
-                            return theme.AppTheme.lightTextColor.withOpacity(0.5);
-                          }
-                          return theme.AppTheme.primaryColor;
-                        },
+                onPressed: controller.isFormValid.value && !controller.isLoading.value
+                    ? () => controller.login()
+                    : null,
+                style: theme.AppTheme.primaryButtonStyle.copyWith(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return theme.AppTheme.lightTextColor.withOpacity(0.5);
+                      }
+                      return theme.AppTheme.primaryColor;
+                    },
+                  ),
+                ),
+                child: controller.isLoading.value
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : Text(
+                        'Iniciar Sesión',
+                        style: text.AppTextStyle.textStyle16w600.copyWith(color: Colors.white),
                       ),
-                    ),
-                    child: Text(
-                      'Iniciar Sesión',
-                      style: text.AppTextStyle.textStyle16w600.copyWith(color: Colors.white),
-                    ),
-                  )),
+              )),
               SizedBox(height: theme.AppTheme.spacing * 2),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -135,8 +148,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Check if signup screen is in alumno and adjust path if necessary
-                      Get.toNamed('/signup'); // Original path - re-evaluate
+                      Get.toNamed('/signup');
                     },
                     child: Text(
                       'Regístrate',

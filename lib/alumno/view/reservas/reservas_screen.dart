@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/reserva_controller.dart';
-import '../model/sitema_reservas.dart';
-import '../utils/utiles.dart';
-import '../config/app_theme.dart' as theme;
-import '../config/textstyle.dart' as text;
-import '../widgets/custom_button.dart';
+import '../../controller/reserva_controller.dart';
+import '../../model/sistema_reservas.dart';
+import '../../utils/utiles.dart';
+import '../../widgets/custom_button.dart';
 
-class ReservaScreen extends StatelessWidget {
-  final controller = Get.put(ReservaController());
+class AlumnoReservaScreen extends StatelessWidget {
+  final controller = Get.put(AlumnoReservaController());
 
-  ReservaScreen({super.key});
+  AlumnoReservaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +16,19 @@ class ReservaScreen extends StatelessWidget {
       appBar: AppBar(title: const Text("Reservar lugar")),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(theme.AppTheme.spacing),
+          padding: const EdgeInsets.all(16.0),
           child: Obx(() {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Seleccionar auto",
-                    style: text.AppTextStyle.textStyle16w600),
+                const Text("Seleccionar auto",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
                 Obx(() {
-                  return DropdownButton<Auto>( // Considerar usar CustomDropdown si se crea uno
+                  return DropdownButton<Auto>(
                     isExpanded: true,
                     value: controller.autoSeleccionado.value,
-                    hint: Text("Seleccionar auto"),
+                    hint: const Text("Seleccionar auto"),
                     onChanged: (auto) {
                       controller.autoSeleccionado.value = auto;
                     },
@@ -39,29 +38,32 @@ class ReservaScreen extends StatelessWidget {
                     }).toList(),
                   );
                 }),
-                SizedBox(height: theme.AppTheme.spacing),
-                Text("Seleccionar piso",
-                    style: text.AppTextStyle.textStyle16w600),
-                DropdownButton<Piso>( // Considerar usar CustomDropdown si se crea uno
-                  isExpanded: true,
-                  value: controller.pisoSeleccionado.value,
-                  hint: Text("Seleccionar piso"),
-                  onChanged: (p) => controller.seleccionarPiso(p!),
-                  items: controller.pisos
-                      .map((p) => DropdownMenuItem(
-                          value: p, child: Text(p.descripcion)))
-                      .toList(),
-                ),
-                SizedBox(height: theme.AppTheme.spacing),
-                Text("Seleccionar lugar",
-                    style: text.AppTextStyle.textStyle16w600),
-                SizedBox(height: theme.AppTheme.smallSpacing),
+                const SizedBox(height: 16),
+                const Text("Seleccionar piso",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                Obx((){
+                  return DropdownButton<Piso>(
+                    isExpanded: true,
+                    value: controller.pisoSeleccionado.value,
+                    hint: const Text("Seleccionar piso"),
+                    onChanged: (p) => controller.seleccionarPiso(p!),
+                    items: controller.pisos
+                        .map((p) => DropdownMenuItem(
+                            value: p, child: Text(p.descripcion)))
+                        .toList(),
+                  );
+                }),
+                const SizedBox(height: 16),
+                const Text("Seleccionar lugar",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
                 SizedBox(
                   height: 200,
                   child: GridView.count(
                     crossAxisCount: 5,
-                    crossAxisSpacing: theme.AppTheme.smallSpacing,
-                    mainAxisSpacing: theme.AppTheme.smallSpacing,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
                     children: controller.lugaresDisponibles
                         .where((l) =>
                             l.codigoPiso ==
@@ -72,7 +74,7 @@ class ReservaScreen extends StatelessWidget {
                       final color = lugar.estado == "RESERVADO"
                           ? Colors.red
                           : seleccionado
-                              ? theme.AppTheme.primaryColor
+                              ? Theme.of(context).primaryColor
                               : Colors.grey.shade300;
 
                       return GestureDetector(
@@ -85,15 +87,15 @@ class ReservaScreen extends StatelessWidget {
                             color: color,
                             border: Border.all(
                                 color: seleccionado
-                                    ? theme.AppTheme.primaryColor
+                                    ? Theme.of(context).primaryColor
                                     : Colors.black12),
-                            borderRadius: BorderRadius.circular(theme.AppTheme.borderRadius),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             lugar.codigoLugar,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: lugar.estado == "reservado"
+                              color: lugar.estado == "RESERVADO"
                                   ? Colors.white
                                   : Colors.black87,
                             ),
@@ -103,10 +105,10 @@ class ReservaScreen extends StatelessWidget {
                     }).toList(),
                   ),
                 ),
-                SizedBox(height: theme.AppTheme.spacing),
-                Text("Seleccionar horarios",
-                    style: text.AppTextStyle.textStyle16w600),
-                SizedBox(height: theme.AppTheme.smallSpacing),
+                const SizedBox(height: 16),
+                const Text("Seleccionar horarios",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
@@ -141,7 +143,7 @@ class ReservaScreen extends StatelessWidget {
                             )),
                       ),
                     ),
-                    SizedBox(width: theme.AppTheme.smallSpacing),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () async {
@@ -177,20 +179,20 @@ class ReservaScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: theme.AppTheme.spacing),
-                Text("Duración rápida",
-                    style: text.AppTextStyle.textStyle16w600),
-                SizedBox(height: theme.AppTheme.smallSpacing),
+                const SizedBox(height: 16),
+                const Text("Duración rápida",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
                 Wrap(
-                  spacing: theme.AppTheme.smallSpacing,
-                  runSpacing: theme.AppTheme.smallSpacing,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [1, 2, 4, 6, 8].map((horas) {
                     final seleccionada =
                         controller.duracionSeleccionada.value == horas;
                     return ChoiceChip(
                       label: Text("$horas h"),
                       selected: seleccionada,
-                      selectedColor: theme.AppTheme.primaryColor,
+                      selectedColor: Theme.of(context).primaryColor,
                       onSelected: (_) {
                         controller.duracionSeleccionada.value = horas;
                         final inicio =
@@ -206,25 +208,25 @@ class ReservaScreen extends StatelessWidget {
                   final inicio = controller.horarioInicio.value;
                   final salida = controller.horarioSalida.value;
 
-                  if (inicio == null || salida == null) return SizedBox.shrink();
+                  if (inicio == null || salida == null) return const SizedBox.shrink();
 
                   final minutos = salida.difference(inicio).inMinutes;
                   final horas = minutos / 60;
                   final monto = (horas * 10000).round();
 
                   return Padding(
-                    padding: EdgeInsets.only(
-                        top: theme.AppTheme.spacing,
-                        bottom: theme.AppTheme.smallSpacing),
+                    padding: const EdgeInsets.only(top: 16, bottom: 8),
                     child: Text(
-                      "Monto estimado: ${UtilesApp.formatearGuaraniesConSimbolo(monto.toDouble())}", // Usando UtilesApp.formatearGuaraniesConSimbolo
-                      style: text.AppTextStyle.textStyle16w600.copyWith(
-                        color: theme.AppTheme.primaryColor,
+                      "Monto estimado: ${UtilesApp.formatearGuaraniesConSimbolo(monto.toDouble())}",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                   );
                 }),
-                SizedBox(height: theme.AppTheme.largeSpacing),
+                const SizedBox(height: 24),
                 CustomButton(
                   onPressed:
                       controller.lugarSeleccionado.value != null &&
@@ -243,7 +245,6 @@ class ReservaScreen extends StatelessWidget {
                                   colorText: Colors.white,
                                 );
                                 controller.resetearCampos();
-                                // TODO: Navegar a pantalla de confirmación o reservas activas
                               } else {
                                 Get.snackbar(
                                   'Error al Reservar',
@@ -256,6 +257,7 @@ class ReservaScreen extends StatelessWidget {
                             }
                           : null,
                   buttonText: "Confirmar Reserva",
+                  isLoading: controller.isLoading.value,
                 ),
               ],
             );
