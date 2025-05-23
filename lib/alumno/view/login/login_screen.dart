@@ -44,123 +44,205 @@ class LoginScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(theme.AppTheme.spacing),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Image.asset(
-                  'assets/images/logo_ucom.png',
-                  height: 100,
-                ),
-              ),
-              SizedBox(height: theme.AppTheme.spacing * 2),
-              Obx(() => TextField(
-                controller: controller.phoneController,
-                keyboardType: TextInputType.phone,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(9),
-                ],
-                onChanged: (value) => controller.validatePhone(value),
-                decoration: theme.AppTheme.textFieldDecoration.copyWith(
-                  labelText: 'Teléfono',
-                  prefixIcon: Icon(Icons.phone, color: theme.AppTheme.primaryColor),
-                  hintText: '9XXXXXXXX',
-                  errorText: controller.isPhoneValid.value || controller.phoneController.text.isEmpty 
-                    ? null 
-                    : 'Número inválido (ej: 9XXXXXXXX)',
-                ),
-              )),
-              SizedBox(height: theme.AppTheme.spacing),
-              Obx(() => TextField(
-                controller: controller.passwordController,
-                obscureText: !controller.isPasswordVisible.value,
-                onChanged: (value) => controller.validatePassword(value),
-                decoration: theme.AppTheme.textFieldDecoration.copyWith(
-                  labelText: 'Contraseña',
-                  prefixIcon: Icon(Icons.lock_outline, color: theme.AppTheme.primaryColor),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      controller.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
-                      color: theme.AppTheme.primaryColor,
-                    ),
-                    onPressed: controller.togglePasswordVisibility,
-                  ),
-                  errorText: controller.isPasswordValid.value || controller.passwordController.text.isEmpty 
-                    ? null 
-                    : 'La contraseña debe tener al menos 6 caracteres',
-                ),
-              )),
-              SizedBox(height: theme.AppTheme.largeSpacing),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Get.toNamed('/password-recovery');
-                  },
-                  child: Text(
-                    '¿Olvidaste tu contraseña?',
-                    style: text.AppTextStyle.textStyle12w400.copyWith(
-                      color: theme.AppTheme.primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: theme.AppTheme.largeSpacing),
-              Obx(() => ElevatedButton(
-                onPressed: controller.isFormValid.value && !controller.isLoading.value
-                    ? () => controller.login()
-                    : null,
-                style: theme.AppTheme.primaryButtonStyle.copyWith(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.disabled)) {
-                        return theme.AppTheme.lightTextColor.withOpacity(0.5);
-                      }
-                      return theme.AppTheme.primaryColor;
-                    },
-                  ),
-                ),
-                child: controller.isLoading.value
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        'Iniciar Sesión',
-                        style: text.AppTextStyle.textStyle16w600.copyWith(color: Colors.white),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              theme.AppTheme.backgroundColor,
+              theme.AppTheme.backgroundColor.withOpacity(0.8),
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(theme.AppTheme.spacing),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
                       ),
-              )),
-              SizedBox(height: theme.AppTheme.spacing * 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '¿No tienes cuenta?',
-                    style: text.AppTextStyle.textStyle14w400.copyWith(color: theme.AppTheme.textColor),
+                    ],
                   ),
-                  TextButton(
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Image.asset(
+                          'assets/images/logo_ucom.png',
+                          height: 120,
+                        ),
+                      ),
+                      SizedBox(height: theme.AppTheme.spacing * 2),
+                      Obx(() => TextField(
+                        controller: controller.phoneController,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(9),
+                        ],
+                        onChanged: (value) => controller.validatePhone(value),
+                        decoration: theme.AppTheme.textFieldDecoration.copyWith(
+                          labelText: 'Teléfono',
+                          prefixIcon: Icon(Icons.phone, color: theme.AppTheme.primaryColor),
+                          hintText: '9XXXXXXXX',
+                          errorText: controller.isPhoneValid.value || controller.phoneController.text.isEmpty 
+                            ? null 
+                            : 'Número inválido (ej: 9XXXXXXXX)',
+                          filled: true,
+                          fillColor: Colors.grey[50],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: theme.AppTheme.primaryColor),
+                          ),
+                        ),
+                      )),
+                      SizedBox(height: theme.AppTheme.spacing),
+                      Obx(() => TextField(
+                        controller: controller.passwordController,
+                        obscureText: !controller.isPasswordVisible.value,
+                        onChanged: (value) => controller.validatePassword(value),
+                        decoration: theme.AppTheme.textFieldDecoration.copyWith(
+                          labelText: 'Contraseña',
+                          prefixIcon: Icon(Icons.lock_outline, color: theme.AppTheme.primaryColor),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              controller.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                              color: theme.AppTheme.primaryColor,
+                            ),
+                            onPressed: controller.togglePasswordVisibility,
+                          ),
+                          errorText: controller.isPasswordValid.value || controller.passwordController.text.isEmpty 
+                            ? null 
+                            : 'La contraseña debe tener al menos 6 caracteres',
+                          filled: true,
+                          fillColor: Colors.grey[50],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: theme.AppTheme.primaryColor),
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+                SizedBox(height: theme.AppTheme.largeSpacing),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
                     onPressed: () {
-                      Get.toNamed('/signup');
+                      Get.toNamed('/password-recovery');
                     },
                     child: Text(
-                      'Regístrate',
-                      style: text.AppTextStyle.textStyle14w400.copyWith(
+                      '¿Olvidaste tu contraseña?',
+                      style: text.AppTextStyle.textStyle12w400.copyWith(
                         color: theme.AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: theme.AppTheme.largeSpacing),
+                Obx(() => ElevatedButton(
+                  onPressed: controller.isFormValid.value && !controller.isLoading.value
+                      ? () => controller.login()
+                      : null,
+                  style: theme.AppTheme.primaryButtonStyle.copyWith(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.disabled)) {
+                          return theme.AppTheme.lightTextColor.withOpacity(0.5);
+                        }
+                        return theme.AppTheme.primaryColor;
+                      },
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    elevation: MaterialStateProperty.all(4),
+                  ),
+                  child: Container(
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: controller.isLoading.value
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            'Iniciar Sesión',
+                            style: text.AppTextStyle.textStyle16w600.copyWith(color: Colors.white),
+                          ),
+                  ),
+                )),
+                SizedBox(height: theme.AppTheme.spacing * 2),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '¿No tienes cuenta?',
+                        style: text.AppTextStyle.textStyle14w400.copyWith(color: theme.AppTheme.textColor),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Get.toNamed('/signup');
+                        },
+                        child: Text(
+                          'Regístrate',
+                          style: text.AppTextStyle.textStyle14w400.copyWith(
+                            color: theme.AppTheme.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
