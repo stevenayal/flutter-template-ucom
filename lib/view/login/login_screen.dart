@@ -12,30 +12,92 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../config/textstyle.dart';
 import 'password_recovery_screen.dart';
+import 'package:finpay/utils/utiles.dart';
+import 'package:flutter_svg/svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final loginController = Get.put(LoginController());
-  final List<FocusNode> _focusNodes = [
-    FocusNode(),
-    FocusNode(),
-  ];
+  final List<FocusNode> _focusNodes = List.generate(2, (index) => FocusNode());
+  SvgPicture? phoneIcon;
+  SvgPicture? lockIcon;
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  bool _isLoading = true;
 
   @override
   void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    
     loginController.isVisible.value = false;
     _focusNodes.forEach((node) {
-      node.addListener(() {
-        setState(() {});
-      });
+      node.addListener(_onFocusChange);
     });
-    super.initState();
+
+    // Inicializar los iconos inmediatamente
+    _initializeIcons();
+  }
+
+  Future<void> _initializeIcons() async {
+    try {
+      final phone = await _loadSvgAsset(DefaultImages.phone);
+      final lock = await _loadSvgAsset(DefaultImages.pswd);
+      
+      if (mounted) {
+        setState(() {
+          phoneIcon = phone;
+          lockIcon = lock;
+          _isLoading = false;
+        });
+        _animationController.forward();
+      }
+    } catch (e) {
+      print('Error loading SVG assets: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<SvgPicture> _loadSvgAsset(String assetName) async {
+    return SvgPicture.asset(
+      assetName,
+      cacheColorFilter: true,
+      placeholderBuilder: (context) => const SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    );
+  }
+
+  void _onFocusChange() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    for (var node in _focusNodes) {
+      node.removeListener(_onFocusChange);
+      node.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -46,68 +108,71 @@ class _LoginScreenState extends State<LoginScreen> {
           SystemNavigator.pop();
           return false;
         },
-        child: InkWell(
-          focusColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
           child: Container(
             color: AppTheme.isLightTheme == false
                 ? const Color(0xff15141F)
                 : const Color(0xffFFFFFF),
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: AppBar().preferredSize.height,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 38),
-                  Text(
-                    "¡Bienvenido!",
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 24,
-                        ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Ingresa a tu cuenta",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: const Color(0xffA2A0A8),
-                        ),
-                  ),
-                  Expanded(
-                    child: ListView(
-                      physics: const ClampingScrollPhysics(),
-                      shrinkWrap: true,
-                      children: [
-                        Column(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 38),
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "¡Bienvenido!",
+                            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 24,
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Ingresa a tu cuenta",
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                  color: const Color(0xffA2A0A8),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: ListView(
+                          physics: const ClampingScrollPhysics(),
+                          shrinkWrap: true,
                           children: [
-                            const SizedBox(height: 30),
-                            _buildPhoneField(),
-                            const SizedBox(height: 24),
-                            _buildPasswordField(),
-                            const SizedBox(height: 16),
-                            _buildForgotPasswordButton(context),
-                            const SizedBox(height: 32),
-                            _buildLoginButton(),
-                            _buildSignUpButton(context),
+                            Column(
+                              children: [
+                                const SizedBox(height: 30),
+                                _buildPhoneField(),
+                                const SizedBox(height: 24),
+                                _buildPasswordField(),
+                                const SizedBox(height: 16),
+                                _buildForgotPasswordButton(context),
+                                const SizedBox(height: 32),
+                                _buildLoginButton(),
+                                _buildSignUpButton(context),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            _buildDivider(),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                        _buildDivider(),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -117,55 +182,46 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildPhoneField() {
-    return Obx(() {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomTextFormField(
-            focusNode: _focusNodes[0],
-            prefix: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: SvgPicture.asset(
-                DefaultImages.phone,
-                color: _focusNodes[0].hasFocus
-                    ? HexColor(AppTheme.primaryColorString!)
-                    : const Color(0xffA2A0A8),
-              ),
-            ),
-            hintText: "+595 9XX XXX XXX",
-            inputType: TextInputType.phone,
-            textEditingController: loginController.mobileController.value,
-            capitalization: TextCapitalization.none,
-            limit: [
-              LengthLimitingTextInputFormatter(12),
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomTextFormField(
+          focusNode: _focusNodes[0],
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: phoneIcon != null
+                ? ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      _focusNodes[0].hasFocus
+                          ? HexColor(AppTheme.primaryColorString!)
+                          : const Color(0xffA2A0A8),
+                      BlendMode.srcIn,
+                    ),
+                    child: phoneIcon!,
+                  )
+                : _buildIconPlaceholder(),
           ),
-          if (!loginController.isPhoneValid.value &&
-              loginController.mobileController.value.text.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-              child: Text(
-                "El número debe comenzar con +595 y tener 8 dígitos después",
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-        ],
-      );
-    });
+          hintText: "+595 9XX XXX XXX",
+          inputType: TextInputType.phone,
+          textEditingController: loginController.mobileController.value,
+          capitalization: TextCapitalization.none,
+          limit: [
+            LengthLimitingTextInputFormatter(12),
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildPasswordField() {
-    return Obx(() {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomTextFormField(
-            focusNode: _focusNodes[1],
-            sufix: InkWell(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomTextFormField(
+          focusNode: _focusNodes[1],
+          sufix: Obx(
+            () => InkWell(
               focusColor: Colors.transparent,
               highlightColor: Colors.transparent,
               hoverColor: Colors.transparent,
@@ -185,39 +241,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            prefix: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: SvgPicture.asset(
-                DefaultImages.pswd,
-                color: _focusNodes[1].hasFocus
-                    ? HexColor(AppTheme.primaryColorString!)
-                    : const Color(0xffA2A0A8),
-              ),
-            ),
-            hintText: "Clave",
-            obscure: !loginController.isVisible.value,
-            textEditingController: loginController.pswdController.value,
-            capitalization: TextCapitalization.none,
-            limit: [
-              FilteringTextInputFormatter.singleLineFormatter,
-            ],
-            inputType: TextInputType.visiblePassword,
           ),
-          if (!loginController.isPasswordValid.value &&
-              loginController.pswdController.value.text.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 16.0),
-              child: Text(
-                "La contraseña debe tener al menos 2 mayúsculas, minúsculas y un carácter especial",
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-        ],
-      );
-    });
+          prefix: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: lockIcon != null
+                ? ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      _focusNodes[1].hasFocus
+                          ? HexColor(AppTheme.primaryColorString!)
+                          : const Color(0xffA2A0A8),
+                      BlendMode.srcIn,
+                    ),
+                    child: lockIcon!,
+                  )
+                : _buildIconPlaceholder(),
+          ),
+          hintText: "Clave",
+          inputType: TextInputType.text,
+          textEditingController: loginController.pswdController.value,
+          obscure: !loginController.isVisible.value,
+          capitalization: TextCapitalization.none,
+        ),
+      ],
+    );
   }
 
   Widget _buildForgotPasswordButton(BuildContext context) {
@@ -250,33 +296,25 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoginButton() {
-    return Obx(() {
-      return InkWell(
-        focusColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        onTap: () {
-          if (loginController.isPhoneValid.value &&
-              loginController.isPasswordValid.value) {
-            Get.to(
-              const TabScreen(),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: 500),
-            );
-          }
-        },
-        child: customButton(
-          loginController.isPhoneValid.value &&
-                  loginController.isPasswordValid.value
-              ? HexColor(AppTheme.primaryColorString!)
-              : Colors.grey,
-          "Ingresar",
-          HexColor(AppTheme.secondaryColorString!),
-          context,
-        ),
-      );
-    });
+    return InkWell(
+      focusColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        Get.to(
+          const TabScreen(),
+          transition: Transition.rightToLeft,
+          duration: const Duration(milliseconds: 500),
+        );
+      },
+      child: customButton(
+        HexColor(AppTheme.primaryColorString!),
+        "Ingresar",
+        HexColor(AppTheme.secondaryColorString!),
+        context,
+      ),
+    );
   }
 
   Widget _buildSignUpButton(BuildContext context) {
@@ -337,6 +375,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _buildIconPlaceholder() {
+    return const SizedBox(
+      width: 24,
+      height: 24,
+      child: CircularProgressIndicator(strokeWidth: 2),
     );
   }
 }

@@ -65,8 +65,8 @@ class DefaultImages {
   static const String text = 'assets/images/FinPay.svg';
   static const String wc1 = 'assets/images/wlcm1.png';
   static const String wc2 = 'assets/images/wlcm2.png';
-  static const String phone = 'assets/images/phone.svg';
-  static const String pswd = 'assets/images/pswd.svg';
+  static const String phone = 'assets/images/call.svg';
+  static const String pswd = 'assets/images/Lock.svg';
   static const String eye = 'assets/images/eye.svg';
   static const String ggl = 'assets/images/ggl.svg';
   static const String userName = 'assets/images/user_name.svg';
@@ -94,4 +94,6 @@ class DefaultImages {
   static const String darkGallery = 'assets/images/darkGallery.svg';
   static const String appLogo = 'assets/images/logo.png';
   static const String car = 'assets/images/car.svg';
+  static const String payment = 'assets/images/payment.svg';
+  static const String pagoIcono = 'assets/images/pago_icono.png';
 }

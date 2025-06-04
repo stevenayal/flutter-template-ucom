@@ -10,6 +10,7 @@ import 'package:finpay/view/home/top_up_screen.dart';
 import 'package:finpay/view/home/widget/circle_card.dart';
 import 'package:finpay/view/home/widget/custom_card.dart';
 import 'package:finpay/alumno/view/reservas/reservas_screen.dart';
+import 'package:finpay/view/pagos/pagos_general_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -236,6 +237,23 @@ class HomeView extends StatelessWidget {
                       child: circleCard(
                         image: DefaultImages.transfer,
                         title: "Reservar",
+                      ),
+                    ),
+                    InkWell(
+                      focusColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        Get.to(
+                          () => PagosGeneralView(),
+                          transition: Transition.rightToLeft,
+                          duration: const Duration(milliseconds: 300),
+                        );
+                      },
+                      child: circleCard(
+                        image: DefaultImages.pagoIcono,
+                        title: "Pagos",
                       ),
                     )
                   ],
