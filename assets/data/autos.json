@@ -1,23 +1,37 @@
 [
   {
-    "chapa": "ABC123",
+    "chapa": "TTEGTR",
+    "marca": "Nissan",
+    "modelo": "Skyline GT-R R34",
+    "chasis": "BNR34",
+    "clienteId": "cliente_1"
+  },
+  {
+    "chapa": "2JZSUP",
     "marca": "Toyota",
-    "modelo": "Corolla",
-    "chasis": "CH123456",
+    "modelo": "Supra MK4",
+    "chasis": "JZA80",
     "clienteId": "cliente_1"
   },
   {
-    "chapa": "DEF456",
-    "marca": "Chevrolet",
-    "modelo": "Onix",
-    "chasis": "CH654321",
+    "chapa": "RX7FD",
+    "marca": "Mazda",
+    "modelo": "RX-7 FD",
+    "chasis": "FD3S",
     "clienteId": "cliente_1"
   },
   {
-    "chapa": "GHI789",
-    "marca": "Ford",
-    "modelo": "Fiesta",
-    "chasis": "CH987654",
+    "chapa": "EVO9",
+    "marca": "Mitsubishi",
+    "modelo": "Lancer Evolution IX",
+    "chasis": "CT9A",
+    "clienteId": "cliente_1"
+  },
+  {
+    "chapa": "GDISTI",
+    "marca": "Subaru",
+    "modelo": "Impreza WRX STI (GD)",
+    "chasis": "GDB",
     "clienteId": "cliente_1"
   }
 ]

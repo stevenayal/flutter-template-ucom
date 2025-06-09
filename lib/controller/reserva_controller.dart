@@ -1,6 +1,7 @@
 import 'package:finpay/model/sitema_reservas.dart';
 import 'package:get/get.dart';
 import 'package:finpay/api/local.db.service.dart';
+import 'package:flutter/material.dart';
 
 class ReservaController extends GetxController {
   RxList<Piso> pisos = <Piso>[].obs;
@@ -29,8 +30,6 @@ class ReservaController extends GetxController {
     final rawReservas = await db.getAll("reservas.json");
 
     final reservas = rawReservas.map((e) => Reserva.fromJson(e)).toList();
-    final lugaresReservados = reservas.map((r) => r.codigoReserva).toSet();
-
     final todosLugares = rawLugares.map((e) => Lugar.fromJson(e)).toList();
 
     // Unir pisos con sus lugares correspondientes
@@ -46,10 +45,32 @@ class ReservaController extends GetxController {
       );
     }).toList();
 
-    // Inicializar lugares disponibles (solo los no reservados)
-    lugaresDisponibles.value = todosLugares.where((l) {
-      return !lugaresReservados.contains(l.codigoLugar);
+    // Filtrar lugares disponibles según horario seleccionado
+    DateTime? inicio = horarioInicio.value;
+    DateTime? fin = horarioSalida.value;
+    
+    lugaresDisponibles.value = todosLugares.where((lugar) {
+      // Buscar reservas activas para este lugar
+      final reservasLugar = reservas.where((r) =>
+        r.codigoLugar == lugar.codigoLugar &&
+        (r.estadoReserva == 'PENDIENTE' || r.estadoReserva == 'COMPLETADO')
+      );
+      if (inicio == null || fin == null) {
+        // Si no hay horario seleccionado, solo filtrar por estado DISPONIBLE
+        return lugar.estado == 'DISPONIBLE';
+      }
+      // Si hay horario seleccionado, filtrar por solapamiento
+      for (final r in reservasLugar) {
+        if (_horariosSeSolapan(inicio, fin, r.horarioInicio, r.horarioSalida)) {
+          return false;
+        }
+      }
+      return lugar.estado == 'DISPONIBLE';
     }).toList();
+  }
+
+  bool _horariosSeSolapan(DateTime inicio1, DateTime fin1, DateTime inicio2, DateTime fin2) {
+    return inicio1.isBefore(fin2) && fin1.isAfter(inicio2);
   }
 
   Future<void> seleccionarPiso(Piso piso) {
@@ -78,6 +99,26 @@ class ReservaController extends GetxController {
 
     if (autoSeleccionado.value == null) return false;
 
+    // Validar que no exista una reserva solapada para este lugar
+    final rawReservas = await db.getAll("reservas.json");
+    final reservas = rawReservas.map((e) => Reserva.fromJson(e)).toList();
+    final reservasSolapadas = reservas.where((r) =>
+      r.codigoLugar == lugarSeleccionado.value!.codigoLugar &&
+      (r.estadoReserva == 'PENDIENTE' || r.estadoReserva == 'COMPLETADO') &&
+      _horariosSeSolapan(horarioInicio.value!, horarioSalida.value!, r.horarioInicio, r.horarioSalida)
+    );
+    if (reservasSolapadas.isNotEmpty) {
+      // Ya existe una reserva para este lugar y horario
+      Get.snackbar(
+        'Lugar no disponible',
+        'Ya existe una reserva para este lugar y horario.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Get.context != null ? Theme.of(Get.context!).colorScheme.error : null,
+        colorText: Get.context != null ? Theme.of(Get.context!).colorScheme.onError : null,
+      );
+      return false;
+    }
+
     final nuevaReserva = Reserva(
       codigoReserva: "RES-${DateTime.now().millisecondsSinceEpoch}",
       horarioInicio: horarioInicio.value!,
@@ -85,6 +126,8 @@ class ReservaController extends GetxController {
       monto: montoCalculado,
       estadoReserva: "PENDIENTE",
       chapaAuto: autoSeleccionado.value!.chapa,
+      clienteId: codigoClienteActual,
+      codigoLugar: lugarSeleccionado.value!.codigoLugar,
     );
 
     try {

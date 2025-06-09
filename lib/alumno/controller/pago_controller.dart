@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../api/local.db.service.dart';
+import '../../api/local.db.service.dart';
 import '../model/pago_model.dart';
 import '../model/sistema_reservas.dart';
 import '../utils/utiles.dart';
@@ -13,6 +13,7 @@ class AlumnoPagoController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString filtroEstado = 'TODOS'.obs;
   final RxString filtroMetodo = 'TODOS'.obs;
+  String codigoClienteActual = 'cliente_1'; // TODO: Obtener del login
 
   @override
   void onInit() {
@@ -27,10 +28,18 @@ class AlumnoPagoController extends GetxController {
       isLoading.value = true;
       final data = await db.getAll("pagos.json");
       print('DEBUG(Controller): Loaded ${data.length} raw payment records from pagos.json');
-
-      pagos.value = data.map((json) => PagoDetallado.fromJson(json)).toList();
+      final reservas = await db.getAll("reservas.json");
+      print('DEBUG(Controller): Loaded ${reservas.length} reservas from reservas.json: '+reservas.toString());
+      final reservasCliente = reservas.where((r) => 
+        r['clienteId'] == codigoClienteActual
+      ).map((r) => r['codigoReserva'] as String).toSet();
+      print('DEBUG(Controller): reservasCliente = '+reservasCliente.toString());
+      pagos.value = data
+        .map((json) => PagoDetallado.fromJson(json))
+        .where((pago) => reservasCliente.contains(pago.codigoReservaAsociada))
+        .toList();
+      print('DEBUG(Controller): pagos.value = '+pagos.toString());
       print('DEBUG(Controller): Converted ${pagos.length} raw records to PagoDetallado objects.');
-
     } catch (e) {
       print("ERROR(Controller): Error al cargar pagos: $e");
       Get.snackbar(
@@ -48,7 +57,17 @@ class AlumnoPagoController extends GetxController {
 
   List<PagoDetallado> get pagosFiltrados {
     print('DEBUG(Controller): Accessing pagosFiltrados getter.');
-    return pagos.toList();
+    var filtered = pagos.toList();
+    
+    if (filtroEstado.value != 'TODOS') {
+      filtered = filtered.where((p) => p.estadoPago == filtroEstado.value).toList();
+    }
+    
+    if (filtroMetodo.value != 'TODOS') {
+      filtered = filtered.where((p) => p.metodoPago == filtroMetodo.value).toList();
+    }
+    
+    return filtered;
   }
 
   double get totalPagos {
@@ -60,30 +79,36 @@ class AlumnoPagoController extends GetxController {
 
   Future<bool> _actualizarReservaYEstacionamiento(String codigoReserva) async {
     try {
-      // 1. Actualizar el estado de la reserva
+      // 1. Obtener la reserva y verificar que pertenece al cliente actual
       final reservas = await db.getAll("reservas.json");
-      final reservaIndex = reservas.indexWhere((r) => r['codigoReserva'] == codigoReserva);
+      final reservaIndex = reservas.indexWhere((r) => 
+        r['codigoReserva'] == codigoReserva && 
+        r['clienteId'] == codigoClienteActual
+      );
       
       if (reservaIndex == -1) {
-        print("ERROR(Controller): No se encontró la reserva $codigoReserva");
+        print("ERROR(Controller): No se encontró la reserva $codigoReserva para el cliente actual");
         return false;
       }
 
-      // Actualizar estado de la reserva a COMPLETADO
+      final reserva = reservas[reservaIndex];
+      final codigoLugar = reserva['codigoLugar']; // Obtener el código del lugar de la reserva
+
+      // 2. Actualizar estado de la reserva a COMPLETADO
       reservas[reservaIndex]['estadoReserva'] = 'COMPLETADO';
       await db.saveAll("reservas.json", reservas);
       print('DEBUG(Controller): Reserva $codigoReserva actualizada a COMPLETADO');
 
-      // 2. Liberar el lugar de estacionamiento
+      // 3. Liberar el lugar de estacionamiento usando el código correcto
       final lugares = await db.getAll("lugares.json");
-      final lugarIndex = lugares.indexWhere((l) => l['codigoLugar'] == codigoReserva);
+      final lugarIndex = lugares.indexWhere((l) => l['codigoLugar'] == codigoLugar);
       
       if (lugarIndex != -1) {
         lugares[lugarIndex]['estado'] = 'DISPONIBLE';
         await db.saveAll("lugares.json", lugares);
-        print('DEBUG(Controller): Lugar de estacionamiento liberado');
+        print('DEBUG(Controller): Lugar de estacionamiento $codigoLugar liberado');
       } else {
-        print("WARNING(Controller): No se encontró el lugar asociado a la reserva $codigoReserva");
+        print("WARNING(Controller): No se encontró el lugar $codigoLugar asociado a la reserva $codigoReserva");
       }
 
       return true;
@@ -94,41 +119,33 @@ class AlumnoPagoController extends GetxController {
   }
 
   Future<void> registrarPago(PagoDetallado nuevoPago) async {
-    print('DEBUG(Controller): Attempting to register new payment: ${nuevoPago.codigoPago}');
+    print('DEBUG(Controller): Attempting to register new payment: '+nuevoPago.toJson().toString());
     try {
       isLoading.value = true;
-
-      // 1. Verificar que la reserva existe y está pendiente
       final reservas = await db.getAll("reservas.json");
-      final reservaIndex = reservas.indexWhere((r) => r['codigoReserva'] == nuevoPago.codigoReservaAsociada);
+      print('DEBUG(Controller): reservas.json = '+reservas.toString());
+      final reservaIndex = reservas.indexWhere((r) => 
+        r['codigoReserva'] == nuevoPago.codigoReservaAsociada &&
+        r['clienteId'] == codigoClienteActual
+      );
+      print('DEBUG(Controller): reservaIndex = $reservaIndex');
       if (reservaIndex == -1) {
-        throw Exception('No se encontró la reserva asociada');
+        throw Exception('No se encontró la reserva asociada o no pertenece al cliente actual');
       }
       final reserva = reservas[reservaIndex];
-
-      if (reserva == null) {
-        throw Exception('No se encontró la reserva asociada');
-      }
-
       if (reserva['estadoReserva'] != 'PENDIENTE') {
         throw Exception('La reserva ya no está pendiente');
       }
-
-      // 2. Registrar el pago
       final pagosActuales = await db.getAll("pagos.json");
+      print('DEBUG(Controller): pagosActuales antes de agregar = '+pagosActuales.toString());
       pagosActuales.add(nuevoPago.toJson());
       await db.saveAll("pagos.json", pagosActuales);
       print('DEBUG(Controller): Successfully saved new payment to pagos.json');
-
-      // 3. Actualizar reserva y liberar estacionamiento
       final success = await _actualizarReservaYEstacionamiento(nuevoPago.codigoReservaAsociada);
       if (!success) {
         throw Exception('Error al actualizar el estado de la reserva y el estacionamiento');
       }
-
-      // 4. Recargar la lista de pagos
       await cargarPagos();
-      
       Get.snackbar(
         'Éxito',
         'Pago registrado y reserva completada correctamente',
@@ -137,7 +154,6 @@ class AlumnoPagoController extends GetxController {
         colorText: Colors.white,
       );
       print('DEBUG(Controller): New payment registered successfully.');
-
     } catch (e) {
       print("ERROR(Controller): Error al registrar pago: $e");
       Get.snackbar(

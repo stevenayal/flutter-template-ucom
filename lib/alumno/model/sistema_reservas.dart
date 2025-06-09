@@ -33,17 +33,34 @@ class Piso {
     required this.codigo,
     required this.descripcion,
     required this.lugares,
-  });
+  }) {
+    print("DEBUG (Piso constructor): Se creó un Piso con código: $codigo, descripción: $descripcion, lugares: ${lugares.map((l) => l.codigoLugar).join(', ')}");
+  }
 
   factory Piso.fromJson(Map<String, dynamic> json) {
-    return Piso(
-      codigo: json['codigo'],
-      descripcion: json['descripcion'],
-      lugares: (json['lugares'] as List)
-          .map((l) => Lugar.fromJson(l))
-          .toList(),
-    );
+    final codigo = json['codigo'];
+    final descripcion = json['descripcion'];
+    final lugares = (json['lugares'] as List).map((l) => Lugar.fromJson(l)).toList();
+    print("DEBUG (Piso.fromJson): Se creó un Piso (fromJson) con código: $codigo, descripción: $descripcion, lugares: ${lugares.map((l) => l.codigoLugar).join(', ')}");
+    return Piso(codigo: codigo, descripcion: descripcion, lugares: lugares);
   }
+
+  Map<String, dynamic> toJson() => {
+        'codigo': codigo,
+        'descripcion': descripcion,
+        'lugares': lugares.map((l) => l.toJson()).toList(),
+      };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Piso &&
+          runtimeType == other.runtimeType &&
+          codigo == other.codigo &&
+          descripcion == other.descripcion;
+
+  @override
+  int get hashCode => codigo.hashCode ^ descripcion.hashCode;
 }
 
 class Lugar {
@@ -67,6 +84,15 @@ class Lugar {
       descripcionLugar: json['descripcionLugar'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'codigoLugar': codigoLugar,
+      'codigoPiso': codigoPiso,
+      'estado': estado,
+      'descripcionLugar': descripcionLugar,
+    };
+  }
 }
 
 class Reserva {
@@ -76,6 +102,8 @@ class Reserva {
   final double monto;
   final String estadoReserva;
   final String chapaAuto;
+  final String clienteId;
+  final String codigoLugar;
 
   Reserva({
     required this.codigoReserva,
@@ -84,6 +112,8 @@ class Reserva {
     required this.monto,
     required this.estadoReserva,
     required this.chapaAuto,
+    required this.clienteId,
+    required this.codigoLugar,
   });
 
   factory Reserva.fromJson(Map<String, dynamic> json) {
@@ -94,6 +124,8 @@ class Reserva {
       monto: json['monto'].toDouble(),
       estadoReserva: json['estadoReserva'],
       chapaAuto: json['chapaAuto'],
+      clienteId: json['clienteId'],
+      codigoLugar: json['codigoLugar'],
     );
   }
 
@@ -105,6 +137,8 @@ class Reserva {
       'monto': monto,
       'estadoReserva': estadoReserva,
       'chapaAuto': chapaAuto,
+      'clienteId': clienteId,
+      'codigoLugar': codigoLugar,
     };
   }
 } 

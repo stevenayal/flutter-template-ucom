@@ -4,7 +4,7 @@ import '../../alumno/controller/pago_controller.dart';
 import '../../alumno/model/pago_model.dart';
 import '../../alumno/utils/utiles.dart';
 import '../../widgets/custom_button.dart';
-import '../../alumno/api/local.db.service.dart';
+import '../../api/local.db.service.dart';
 
 class PagosGeneralView extends StatelessWidget {
   // Reutilizamos el controlador de alumno pero con un nombre diferente
@@ -329,7 +329,10 @@ class PagosGeneralView extends StatelessWidget {
     // Cargar reservas pendientes
     final db = LocalDBService();
     final reservas = await db.getAll("reservas.json");
-    final reservasPendientes = reservas.where((r) => r['estadoReserva'] == 'PENDIENTE').toList();
+    final reservasPendientes = reservas.where((r) =>
+      r['estadoReserva'] == 'PENDIENTE' &&
+      r['clienteId'] == controller.codigoClienteActual
+    ).toList();
 
     if (reservasPendientes.isEmpty) {
       Get.snackbar(

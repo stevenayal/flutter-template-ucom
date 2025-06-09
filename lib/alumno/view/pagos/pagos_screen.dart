@@ -4,6 +4,7 @@ import '../../controller/pago_controller.dart';
 import '../../model/pago_model.dart';
 import '../../utils/utiles.dart';
 import '../../widgets/custom_button.dart';
+import '../../api/local.db.service.dart';
 
 class AlumnoPagosScreen extends StatelessWidget {
   final controller = Get.put(AlumnoPagoController());
@@ -290,11 +291,30 @@ class AlumnoPagosScreen extends StatelessWidget {
     }
   }
 
-  void _mostrarDialogoNuevoPago(BuildContext context) {
+  void _mostrarDialogoNuevoPago(BuildContext context) async {
     final codigoController = TextEditingController();
     final montoController = TextEditingController();
     final notasController = TextEditingController();
     String metodoSeleccionado = 'EFECTIVO';
+
+    // Cargar reservas pendientes del usuario logueado
+    final db = LocalDBService();
+    final reservas = await db.getAll("reservas.json");
+    final reservasPendientes = reservas.where((r) =>
+      r['estadoReserva'] == 'PENDIENTE' &&
+      r['clienteId'] == controller.codigoClienteActual
+    ).toList();
+
+    if (reservasPendientes.isEmpty) {
+      Get.snackbar(
+        'Sin reservas pendientes',
+        'No hay reservas pendientes de pago',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
 
     showDialog(
       context: context,
@@ -304,12 +324,36 @@ class AlumnoPagosScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: codigoController,
+              DropdownButtonFormField<Map<String, dynamic>>(
+                value: null,
                 decoration: const InputDecoration(
-                  labelText: "Código de Reserva",
+                  labelText: "Seleccionar Reserva",
                   border: OutlineInputBorder(),
                 ),
+                items: reservasPendientes.map<DropdownMenuItem<Map<String, dynamic>>>((reserva) {
+                  final monto = reserva['monto'] as double;
+                  final fechaInicio = DateTime.parse(reserva['horarioInicio']);
+                  final fechaFin = DateTime.parse(reserva['horarioSalida']);
+                  final chapa = reserva['chapaAuto'] as String;
+                  return DropdownMenuItem(
+                    value: reserva,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Reserva: "+reserva['codigoReserva'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text("Auto: $chapa", style: const TextStyle(fontSize: 12)),
+                        Text("Monto: ₲ ${monto.toStringAsFixed(0)}", style: const TextStyle(fontSize: 12)),
+                        Text("Horario: ${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year} - ${fechaFin.day}/${fechaFin.month}/${fechaFin.year}", style: const TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (reserva) {
+                  if (reserva != null) {
+                    codigoController.text = reserva['codigoReserva'];
+                    montoController.text = reserva['monto'].toString();
+                  }
+                },
               ),
               const SizedBox(height: 16),
               TextField(
@@ -320,6 +364,7 @@ class AlumnoPagosScreen extends StatelessWidget {
                   prefixText: "₲ ",
                 ),
                 keyboardType: TextInputType.number,
+                readOnly: true,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(

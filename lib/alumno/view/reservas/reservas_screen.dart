@@ -53,10 +53,27 @@ class AlumnoReservaScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Seleccionar auto",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Seleccionar auto",
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                            TextButton.icon(
+                              onPressed: () => _mostrarDialogoAgregarAuto(context),
+                              icon: const Icon(Icons.add),
+                              label: const Text("Agregar auto"),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 8),
                         Obx(() {
+                          if (controller.autosCliente.isEmpty) {
+                            return const Text(
+                              "No tienes autos registrados. Agrega uno para poder reservar.",
+                              style: TextStyle(color: Colors.redAccent),
+                            );
+                          }
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
@@ -102,6 +119,9 @@ class AlumnoReservaScreen extends StatelessWidget {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
                         Obx(() {
+                          print("DEBUG (dropdown pisos): controller.pisoSeleccionado = "+(controller.pisoSeleccionado.value?.codigo ?? 'null'));
+                          final dropdownValue = controller.pisos.firstWhereOrNull((p) => p.codigo == controller.pisoSeleccionado.value?.codigo);
+                          print("DEBUG (dropdown pisos): dropdown value (firstWhereOrNull) = "+(dropdownValue?.codigo ?? 'null'));
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
@@ -110,13 +130,12 @@ class AlumnoReservaScreen extends StatelessWidget {
                             ),
                             child: DropdownButton<Piso>(
                               isExpanded: true,
-                              value: controller.pisoSeleccionado.value,
+                              value: dropdownValue,
                               hint: const Text("Seleccionar piso"),
                               underline: const SizedBox(),
                               onChanged: (p) => controller.seleccionarPiso(p!),
                               items: controller.pisos
-                                  .map((p) => DropdownMenuItem(
-                                      value: p, child: Text(p.descripcion)))
+                                  .map((p) => DropdownMenuItem(value: p, child: Text(p.descripcion)))
                                   .toList(),
                             ),
                           );
@@ -155,16 +174,21 @@ class AlumnoReservaScreen extends StatelessWidget {
                                     l.codigoPiso ==
                                     controller.pisoSeleccionado.value?.codigo)
                                 .map((lugar) {
+                              // Determinar si el lugar está ocupado por una reserva
+                              final reservasLugar = controller.db != null ? [] : [];
+                              // Si tienes acceso a las reservas en el controlador, puedes usarlo aquí
+                              // Por ahora, usamos el estado del lugar
+                              final ocupado = lugar.estado == "RESERVADO";
                               final seleccionado =
                                   lugar == controller.lugarSeleccionado.value;
-                              final color = lugar.estado == "RESERVADO"
+                              final color = ocupado
                                   ? Colors.red
                                   : seleccionado
                                       ? Theme.of(context).primaryColor
                                       : Colors.grey.shade300;
 
                               return GestureDetector(
-                                onTap: lugar.estado == "DISPONIBLE"
+                                onTap: !ocupado
                                     ? () => controller.lugarSeleccionado.value = lugar
                                     : null,
                                 child: Container(
@@ -188,7 +212,7 @@ class AlumnoReservaScreen extends StatelessWidget {
                                     lugar.codigoLugar,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: lugar.estado == "RESERVADO"
+                                      color: ocupado
                                           ? Colors.white
                                           : Colors.black87,
                                     ),
@@ -438,6 +462,146 @@ class AlumnoReservaScreen extends StatelessWidget {
               );
             }),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _mostrarDialogoAgregarAuto(BuildContext context) {
+    final chapaController = TextEditingController();
+    final chasisController = TextEditingController();
+    final controller = Get.find<AlumnoReservaController>();
+
+    // Map de marcas y modelos icónicos
+    const Map<String, List<String>> autosPopulares = {
+      "Nissan": ["Skyline GT-R R34", "350Z", "Silvia S15"],
+      "Toyota": ["Supra MK4", "AE86", "Celica GT-Four"],
+      "Mazda": ["RX-7 FD", "RX-8"],
+      "Mitsubishi": ["Lancer Evolution IX", "Lancer Evolution VI", "3000GT"],
+      "Subaru": ["Impreza WRX STI (GD)", "BRZ"],
+      "Ford": ["Mustang GT", "Focus RS"],
+      "Chevrolet": ["Camaro SS", "Corvette C6"],
+      "Dodge": ["Charger R/T", "Viper GTS"],
+      "BMW": ["M3 GTR", "M5 E60"],
+      "Porsche": ["911 GT3 RS", "Carrera GT"],
+      "Volkswagen": ["Golf GTI"],
+      "Honda": ["Civic Type R", "S2000"],
+      "Audi": ["RS4"],
+      "Lamborghini": ["Murciélago", "Gallardo"],
+      "Ferrari": ["F355", "F40"],
+    };
+    String? marcaSeleccionada;
+    String? modeloSeleccionado;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text("Agregar auto"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: chapaController,
+                  decoration: const InputDecoration(
+                    labelText: "Chapa",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: marcaSeleccionada,
+                  decoration: const InputDecoration(
+                    labelText: "Marca",
+                    border: OutlineInputBorder(),
+                  ),
+                  items: autosPopulares.keys
+                      .map((marca) => DropdownMenuItem(
+                            value: marca,
+                            child: Text(marca),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      marcaSeleccionada = value;
+                      modeloSeleccionado = null;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: modeloSeleccionado,
+                  decoration: const InputDecoration(
+                    labelText: "Modelo",
+                    border: OutlineInputBorder(),
+                  ),
+                  items: (marcaSeleccionada != null)
+                      ? autosPopulares[marcaSeleccionada]!
+                          .map((modelo) => DropdownMenuItem(
+                                value: modelo,
+                                child: Text(modelo),
+                              ))
+                          .toList()
+                      : [],
+                  onChanged: (value) {
+                    setState(() {
+                      modeloSeleccionado = value;
+                    });
+                  },
+                  disabledHint: const Text("Selecciona una marca primero"),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: chasisController,
+                  decoration: const InputDecoration(
+                    labelText: "Chasis",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (chapaController.text.isEmpty || marcaSeleccionada == null || modeloSeleccionado == null || chasisController.text.isEmpty) {
+                  Get.snackbar(
+                    'Error',
+                    'Completa todos los campos',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                  );
+                  return;
+                }
+                final db = controller.db;
+                final autos = await db.getAll("autos.json");
+                autos.add({
+                  "chapa": chapaController.text,
+                  "marca": marcaSeleccionada,
+                  "modelo": modeloSeleccionado,
+                  "chasis": chasisController.text,
+                  "clienteId": controller.codigoClienteActual
+                });
+                await db.saveAll("autos.json", autos);
+                await controller.cargarAutosDelCliente();
+                Navigator.pop(context);
+                Get.snackbar(
+                  'Éxito',
+                  'Auto agregado correctamente',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              },
+              child: const Text("Guardar"),
+            ),
+          ],
         ),
       ),
     );
