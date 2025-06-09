@@ -82,8 +82,73 @@ class PagosGeneralView extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   itemCount: controller.pagosFiltrados.length,
                   itemBuilder: (context, index) {
-                    final pago = controller.pagosFiltrados[index];
-                    return _buildPagoCard(context, pago);
+                    final item = controller.pagosFiltrados[index];
+                    if (item is PagoDetallado) {
+                      return _buildPagoCard(context, item);
+                    } else if (item is Map && item['isReservaPendiente'] == true) {
+                      // Tarjeta de reserva pendiente de pago
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: const BorderSide(color: Colors.orange),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Reserva pendiente: "+(item['codigoReserva'] ?? ''),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text("Auto: "+(item['chapaAuto'] ?? ''), style: const TextStyle(fontSize: 14)),
+                              Text("Monto: "+UtilesApp.formatearGuaraniesConSimbolo(item['monto']), style: const TextStyle(fontSize: 14)),
+                              Text("Horario: "+(item['horarioInicio'] ?? ''), style: const TextStyle(fontSize: 14)),
+                              const SizedBox(height: 16),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    try {
+                                      print('DEBUG(PagosGeneralView): Abriendo diálogo de pago para reserva pendiente: '+(item['codigoReserva'] ?? 'null').toString());
+                                      _mostrarDialogoNuevoPago(context, reserva: Map<String, dynamic>.from(item));
+                                      print('DEBUG(PagosGeneralView): Diálogo de pago cerrado para reserva: '+(item['codigoReserva'] ?? 'null').toString());
+                                    } catch (e, st) {
+                                      print('ERROR(PagosGeneralView): Error al abrir diálogo de pago para reserva pendiente: '+e.toString());
+                                      print(st);
+                                      Get.snackbar(
+                                        'Error',
+                                        'No se pudo abrir el diálogo de pago para la reserva seleccionada',
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: Colors.red,
+                                        colorText: Colors.white,
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text("Pagar ahora", style: TextStyle(fontSize: 16)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
                   },
                 );
               }),
@@ -119,9 +184,22 @@ class PagosGeneralView extends StatelessWidget {
             child: _buildResumenCard(
               "Pendientes",
               UtilesApp.formatearGuaraniesConSimbolo(
-                controller.pagosFiltrados
-                    .where((p) => p.estadoPago == 'PENDIENTE')
-                    .fold(0, (sum, p) => sum + p.montoPagado),
+                controller.pagosFiltrados.where((p) {
+                  if (p is PagoDetallado) {
+                    return p.estadoPago == 'PENDIENTE';
+                  } else if (p is Map && p['isReservaPendiente'] == true) {
+                    return true;
+                  }
+                  return false;
+                }).fold(0.0, (sum, p) {
+                  if (p is PagoDetallado) {
+                    return sum + p.montoPagado;
+                  } else if (p is Map && p['isReservaPendiente'] == true) {
+                    final monto = p['monto'];
+                    if (monto is num) return sum + monto.toDouble();
+                  }
+                  return sum;
+                }),
               ),
               Icons.pending_actions,
               Colors.orange,
@@ -319,7 +397,7 @@ class PagosGeneralView extends StatelessWidget {
     }
   }
 
-  void _mostrarDialogoNuevoPago(BuildContext context) async {
+  void _mostrarDialogoNuevoPago(BuildContext context, {Map<String, dynamic>? reserva}) async {
     final codigoController = TextEditingController();
     final montoController = TextEditingController();
     final notasController = TextEditingController();
@@ -328,13 +406,21 @@ class PagosGeneralView extends StatelessWidget {
 
     // Cargar reservas pendientes
     final db = LocalDBService();
-    final reservas = await db.getAll("reservas.json");
-    final reservasPendientes = reservas.where((r) =>
-      r['estadoReserva'] == 'PENDIENTE' &&
-      r['clienteId'] == controller.codigoClienteActual
-    ).toList();
+    List reservas;
+    if (reserva != null) {
+      print('DEBUG(PagosGeneralView): Mostrando diálogo de pago prellenado para reserva: '+(reserva['codigoReserva'] ?? 'null').toString());
+      reservas = [reserva];
+    } else {
+      reservas = await db.getAll("reservas.json");
+      reservas = reservas.where((r) =>
+        r['estadoReserva'] == 'PENDIENTE' &&
+        r['clienteId'] == controller.codigoClienteActual
+      ).toList();
+      print('DEBUG(PagosGeneralView): Mostrando diálogo de pago para selección de reserva. Pendientes: '+reservas.length.toString());
+    }
 
-    if (reservasPendientes.isEmpty) {
+    if (reservas.isEmpty) {
+      print('DEBUG(PagosGeneralView): No hay reservas pendientes para mostrar en el diálogo de pago.');
       Get.snackbar(
         'Sin reservas pendientes',
         'No hay reservas pendientes de pago',
@@ -372,14 +458,14 @@ class PagosGeneralView extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(Icons.confirmation_number),
                   ),
-                  items: reservasPendientes.map((reserva) {
+                  items: reservas.map<DropdownMenuItem<Map<String, dynamic>>>((reserva) {
                     final monto = reserva['monto'] as double;
                     final fechaInicio = DateTime.parse(reserva['horarioInicio']);
                     final fechaFin = DateTime.parse(reserva['horarioSalida']);
                     final chapa = reserva['chapaAuto'] as String;
                     
-                    return DropdownMenuItem(
-                      value: reserva,
+                    return DropdownMenuItem<Map<String, dynamic>>(
+                      value: reserva as Map<String, dynamic>,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,

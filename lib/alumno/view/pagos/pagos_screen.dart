@@ -43,7 +43,7 @@ class AlumnoPagosScreen extends StatelessWidget {
                 if (controller.pagosFiltrados.isEmpty) {
                   return const Center(
                     child: Text(
-                      "No hay pagos registrados",
+                      "No hay pagos registrados ni reservas pendientes",
                       style: TextStyle(fontSize: 16),
                     ),
                   );
@@ -53,8 +53,58 @@ class AlumnoPagosScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   itemCount: controller.pagosFiltrados.length,
                   itemBuilder: (context, index) {
-                    final pago = controller.pagosFiltrados[index];
-                    return _buildPagoCard(context, pago);
+                    final item = controller.pagosFiltrados[index];
+                    print('DEBUG(PagosScreen): item #$index type: '+item.runtimeType.toString()+', value: '+item.toString());
+                    if (item is PagoDetallado) {
+                      return _buildPagoCard(context, item);
+                    } else if (item is Map && item['isReservaPendiente'] == true) {
+                      // Tarjeta de reserva pendiente de pago
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(color: Colors.orange),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Reserva pendiente: "+item['codigoReserva'],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _mostrarDialogoNuevoPago(context, reserva: Map<String, dynamic>.from(item));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: const Text("Pagar ahora"),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text("Auto: "+(item['chapaAuto'] ?? ''), style: const TextStyle(fontSize: 14)),
+                              Text("Monto: ₲ "+(item['monto']?.toStringAsFixed(0) ?? ''), style: const TextStyle(fontSize: 14)),
+                              Text("Horario: "+(item['horarioInicio'] ?? ''), style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
                   },
                 );
               }),
@@ -291,21 +341,26 @@ class AlumnoPagosScreen extends StatelessWidget {
     }
   }
 
-  void _mostrarDialogoNuevoPago(BuildContext context) async {
+  void _mostrarDialogoNuevoPago(BuildContext context, {Map<String, dynamic>? reserva}) async {
     final codigoController = TextEditingController();
     final montoController = TextEditingController();
     final notasController = TextEditingController();
     String metodoSeleccionado = 'EFECTIVO';
 
     // Cargar reservas pendientes del usuario logueado
-    final db = LocalDBService();
-    final reservas = await db.getAll("reservas.json");
-    final reservasPendientes = reservas.where((r) =>
-      r['estadoReserva'] == 'PENDIENTE' &&
-      r['clienteId'] == controller.codigoClienteActual
-    ).toList();
+    final db = controller.db;
+    List reservas;
+    if (reserva != null) {
+      reservas = [reserva];
+    } else {
+      reservas = await db.getAll("reservas.json");
+      reservas = reservas.where((r) =>
+        r['estadoReserva'] == 'PENDIENTE' &&
+        r['clienteId'] == controller.codigoClienteActual
+      ).toList();
+    }
 
-    if (reservasPendientes.isEmpty) {
+    if (reservas.isEmpty) {
       Get.snackbar(
         'Sin reservas pendientes',
         'No hay reservas pendientes de pago',
@@ -325,22 +380,22 @@ class AlumnoPagosScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<Map<String, dynamic>>(
-                value: null,
+                value: reserva,
                 decoration: const InputDecoration(
                   labelText: "Seleccionar Reserva",
                   border: OutlineInputBorder(),
                 ),
-                items: reservasPendientes.map<DropdownMenuItem<Map<String, dynamic>>>((reserva) {
-                  final monto = reserva['monto'] as double;
-                  final fechaInicio = DateTime.parse(reserva['horarioInicio']);
-                  final fechaFin = DateTime.parse(reserva['horarioSalida']);
-                  final chapa = reserva['chapaAuto'] as String;
+                items: reservas.map<DropdownMenuItem<Map<String, dynamic>>>((res) {
+                  final monto = res['monto'] as double;
+                  final fechaInicio = DateTime.parse(res['horarioInicio']);
+                  final fechaFin = DateTime.parse(res['horarioSalida']);
+                  final chapa = res['chapaAuto'] as String;
                   return DropdownMenuItem(
-                    value: reserva,
+                    value: res,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Reserva: "+reserva['codigoReserva'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text("Reserva: "+res['codigoReserva'], style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text("Auto: $chapa", style: const TextStyle(fontSize: 12)),
                         Text("Monto: ₲ ${monto.toStringAsFixed(0)}", style: const TextStyle(fontSize: 12)),
                         Text("Horario: ${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year} - ${fechaFin.day}/${fechaFin.month}/${fechaFin.year}", style: const TextStyle(fontSize: 12)),
@@ -348,10 +403,10 @@ class AlumnoPagosScreen extends StatelessWidget {
                     ),
                   );
                 }).toList(),
-                onChanged: (reserva) {
-                  if (reserva != null) {
-                    codigoController.text = reserva['codigoReserva'];
-                    montoController.text = reserva['monto'].toString();
+                onChanged: (res) {
+                  if (res != null) {
+                    codigoController.text = res['codigoReserva'];
+                    montoController.text = res['monto'].toString();
                   }
                 },
               ),

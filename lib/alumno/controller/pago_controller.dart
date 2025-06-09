@@ -15,6 +15,9 @@ class AlumnoPagoController extends GetxController {
   final RxString filtroMetodo = 'TODOS'.obs;
   String codigoClienteActual = 'cliente_1'; // TODO: Obtener del login
 
+  // Cache de reservas para pagosFiltrados
+  List<Map<String, dynamic>> cacheReservas = [];
+
   @override
   void onInit() {
     super.onInit();
@@ -29,6 +32,7 @@ class AlumnoPagoController extends GetxController {
       final data = await db.getAll("pagos.json");
       print('DEBUG(Controller): Loaded ${data.length} raw payment records from pagos.json');
       final reservas = await db.getAll("reservas.json");
+      cacheReservas = reservas;
       print('DEBUG(Controller): Loaded ${reservas.length} reservas from reservas.json: '+reservas.toString());
       final reservasCliente = reservas.where((r) => 
         r['clienteId'] == codigoClienteActual
@@ -55,24 +59,73 @@ class AlumnoPagoController extends GetxController {
     }
   }
 
-  List<PagoDetallado> get pagosFiltrados {
+  List<dynamic> get pagosFiltrados {
     print('DEBUG(Controller): Accessing pagosFiltrados getter.');
     var filtered = pagos.toList();
-    
     if (filtroEstado.value != 'TODOS') {
-      filtered = filtered.where((p) => p.estadoPago == filtroEstado.value).toList();
+      filtered = filtered.where((p) {
+        if (p is PagoDetallado) {
+          return p.estadoPago == filtroEstado.value;
+        } else {
+          print('WARNING(Controller): Elemento no es PagoDetallado en filtroEstado: '+p.runtimeType.toString());
+          return false;
+        }
+      }).toList();
     }
-    
     if (filtroMetodo.value != 'TODOS') {
-      filtered = filtered.where((p) => p.metodoPago == filtroMetodo.value).toList();
+      filtered = filtered.where((p) {
+        if (p is PagoDetallado) {
+          return p.metodoPago == filtroMetodo.value;
+        } else {
+          print('WARNING(Controller): Elemento no es PagoDetallado en filtroMetodo: '+p.runtimeType.toString());
+          return false;
+        }
+      }).toList();
     }
-    
-    return filtered;
+    // Cargar reservas pendientes de pago (sin pago asociado)
+    final List<Map<String, dynamic>> reservasPendientes = [];
+    final reservasRaw = cacheReservas;
+    final pagosRaw = pagos;
+    final reservasConPago = pagosRaw.map((p) => p.codigoReservaAsociada).toSet();
+    // Solo mostrar reservas pendientes si el filtro de estado es TODOS o PENDIENTE
+    if (filtroEstado.value == 'TODOS' || filtroEstado.value == 'PENDIENTE') {
+      for (final r in reservasRaw) {
+        if (r['clienteId'] == codigoClienteActual &&
+            r['estadoReserva'] == 'PENDIENTE' &&
+            !reservasConPago.contains(r['codigoReserva'])) {
+          reservasPendientes.add({...r, 'isReservaPendiente': true});
+        }
+      }
+    }
+    final result = [
+      ...reservasPendientes,
+      ...filtered
+    ];
+    print('DEBUG(Controller): pagosFiltrados result types: '+result.map((e) => e.runtimeType.toString()).join(", "));
+    return result;
   }
 
   double get totalPagos {
     print('DEBUG(Controller): Accessing totalPagos getter.');
-    final total = pagosFiltrados.fold(0.0, (sum, pago) => sum + pago.montoPagado);
+    double total = 0.0;
+    for (final pago in pagosFiltrados) {
+      if (pago is PagoDetallado) {
+        total += pago.montoPagado;
+      } else if (pago is Map && pago['isReservaPendiente'] == true) {
+        try {
+          final monto = pago['monto'];
+          if (monto is num) {
+            total += monto.toDouble();
+          } else {
+            print('WARNING(Controller): Monto de reserva pendiente no es num: '+monto.toString());
+          }
+        } catch (e) {
+          print('ERROR(Controller): Error al sumar monto de reserva pendiente: '+e.toString());
+        }
+      } else {
+        print('WARNING(Controller): Elemento inesperado en totalPagos: '+pago.runtimeType.toString());
+      }
+    }
     print('DEBUG(Controller): Calculated total for payments: $total');
     return total;
   }
