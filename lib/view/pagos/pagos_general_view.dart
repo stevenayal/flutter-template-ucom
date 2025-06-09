@@ -4,6 +4,7 @@ import '../../alumno/controller/pago_controller.dart';
 import '../../alumno/model/pago_model.dart';
 import '../../alumno/utils/utiles.dart';
 import '../../widgets/custom_button.dart';
+import '../../alumno/api/local.db.service.dart';
 
 class PagosGeneralView extends StatelessWidget {
   // Reutilizamos el controlador de alumno pero con un nombre diferente
@@ -318,121 +319,204 @@ class PagosGeneralView extends StatelessWidget {
     }
   }
 
-  void _mostrarDialogoNuevoPago(BuildContext context) {
+  void _mostrarDialogoNuevoPago(BuildContext context) async {
     final codigoController = TextEditingController();
     final montoController = TextEditingController();
     final notasController = TextEditingController();
     String metodoSeleccionado = 'EFECTIVO';
+    bool isLoading = false;
+
+    // Cargar reservas pendientes
+    final db = LocalDBService();
+    final reservas = await db.getAll("reservas.json");
+    final reservasPendientes = reservas.where((r) => r['estadoReserva'] == 'PENDIENTE').toList();
+
+    if (reservasPendientes.isEmpty) {
+      Get.snackbar(
+        'Sin reservas pendientes',
+        'No hay reservas pendientes de pago',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              Icons.add_circle,
-              color: Theme.of(context).primaryColor,
-            ),
-            const SizedBox(width: 8),
-            const Text("Nuevo Pago"),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Row(
             children: [
-              TextField(
-                controller: codigoController,
-                decoration: InputDecoration(
-                  labelText: "Código de Reserva",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.confirmation_number),
-                ),
+              Icon(
+                Icons.payment,
+                color: Theme.of(context).primaryColor,
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: montoController,
-                decoration: InputDecoration(
-                  labelText: "Monto",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.attach_money),
-                  prefixText: "₲ ",
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: metodoSeleccionado,
-                decoration: InputDecoration(
-                  labelText: "Método de Pago",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: Icon(_getIconMetodoPago(metodoSeleccionado)),
-                ),
-                items: ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA']
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                onChanged: (value) => metodoSeleccionado = value!,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: notasController,
-                decoration: InputDecoration(
-                  labelText: "Notas (opcional)",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  prefixIcon: const Icon(Icons.note),
-                ),
-                maxLines: 2,
-              ),
+              const SizedBox(width: 8),
+              const Text("Registrar Pago"),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (codigoController.text.isEmpty || montoController.text.isEmpty) {
-                Get.snackbar(
-                  'Error',
-                  'Por favor complete todos los campos requeridos',
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: Colors.red,
-                  colorText: Colors.white,
-                );
-                return;
-              }
-
-              final nuevoPago = PagoDetallado(
-                codigoPago: "PAG-${DateTime.now().millisecondsSinceEpoch}",
-                codigoReservaAsociada: codigoController.text,
-                montoPagado: double.parse(montoController.text),
-                fechaPago: DateTime.now(),
-                metodoPago: metodoSeleccionado,
-                estadoPago: 'COMPLETADO',
-                notas: notasController.text.isEmpty ? null : notasController.text,
-              );
-
-              controller.registrarPago(nuevoPago);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<Map<String, dynamic>>(
+                  value: null,
+                  decoration: InputDecoration(
+                    labelText: "Seleccionar Reserva",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.confirmation_number),
+                  ),
+                  items: reservasPendientes.map((reserva) {
+                    final monto = reserva['monto'] as double;
+                    final fechaInicio = DateTime.parse(reserva['horarioInicio']);
+                    final fechaFin = DateTime.parse(reserva['horarioSalida']);
+                    final chapa = reserva['chapaAuto'] as String;
+                    
+                    return DropdownMenuItem(
+                      value: reserva,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Reserva: ${reserva['codigoReserva']}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "Auto: $chapa",
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                          Text(
+                            "Monto: ${UtilesApp.formatearGuaraniesConSimbolo(monto)}",
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                          Text(
+                            "Horario: ${UtilesApp.formatearFechaDdMMAaaa(fechaInicio)} - ${UtilesApp.formatearFechaDdMMAaaa(fechaFin)}",
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (reserva) {
+                    if (reserva != null) {
+                      codigoController.text = reserva['codigoReserva'];
+                      montoController.text = reserva['monto'].toString();
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: montoController,
+                  decoration: InputDecoration(
+                    labelText: "Monto",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.attach_money),
+                    prefixText: "₲ ",
+                  ),
+                  keyboardType: TextInputType.number,
+                  readOnly: true, // El monto viene de la reserva
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: metodoSeleccionado,
+                  decoration: InputDecoration(
+                    labelText: "Método de Pago",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: Icon(_getIconMetodoPago(metodoSeleccionado)),
+                  ),
+                  items: ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA']
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  onChanged: (value) => metodoSeleccionado = value!,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: notasController,
+                  decoration: InputDecoration(
+                    labelText: "Notas (opcional)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.note),
+                  ),
+                  maxLines: 2,
+                ),
+              ],
             ),
-            child: const Text("Registrar"),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () => Navigator.pop(context),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (codigoController.text.isEmpty || montoController.text.isEmpty) {
+                        Get.snackbar(
+                          'Error',
+                          'Por favor seleccione una reserva',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                        return;
+                      }
+
+                      setState(() => isLoading = true);
+
+                      try {
+                        final nuevoPago = PagoDetallado(
+                          codigoPago: "PAG-${DateTime.now().millisecondsSinceEpoch}",
+                          codigoReservaAsociada: codigoController.text,
+                          montoPagado: double.parse(montoController.text),
+                          fechaPago: DateTime.now(),
+                          metodoPago: metodoSeleccionado,
+                          estadoPago: 'COMPLETADO',
+                          notas: notasController.text.isEmpty ? null : notasController.text,
+                        );
+
+                        await controller.registrarPago(nuevoPago);
+                        Navigator.pop(context);
+                      } catch (e) {
+                        Get.snackbar(
+                          'Error',
+                          e.toString(),
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      } finally {
+                        setState(() => isLoading = false);
+                      }
+                    },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text("Registrar Pago"),
+            ),
+          ],
+        ),
       ),
     );
   }
