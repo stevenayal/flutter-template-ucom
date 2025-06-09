@@ -99,19 +99,48 @@ class PagosGeneralView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Reserva pendiente: "+(item['codigoReserva'] ?? ''),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange,
-                                ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.directions_car, color: Colors.orange, size: 18),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    item['marcaAuto'] ?? '',
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Icon(Icons.confirmation_number, color: Colors.blueGrey, size: 18),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item['chapaAuto'] ?? '',
+                                    style: const TextStyle(color: Colors.grey),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 8),
-                              Text("Auto: "+(item['chapaAuto'] ?? ''), style: const TextStyle(fontSize: 14)),
-                              Text("Monto: "+UtilesApp.formatearGuaraniesConSimbolo(item['monto']), style: const TextStyle(fontSize: 14)),
-                              Text("Horario: "+(item['horarioInicio'] ?? ''), style: const TextStyle(fontSize: 14)),
-                              const SizedBox(height: 16),
+                              Text(
+                                'Reserva: ${(item['codigoReserva'] ?? '')}',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Monto: '+UtilesApp.formatearGuaraniesConSimbolo(item['monto'] ?? 0),
+                                style: const TextStyle(color: Colors.green),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Horario: '+
+                                  UtilesApp.formatearFechaDdMMAaaa(DateTime.parse(item['horarioInicio']))+
+                                  ' - '+
+                                  UtilesApp.formatearFechaDdMMAaaa(DateTime.parse(item['horarioSalida'])),
+                                style: const TextStyle(color: Colors.black54),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 12),
                               Center(
                                 child: ElevatedButton(
                                   onPressed: () {
@@ -120,26 +149,13 @@ class PagosGeneralView extends StatelessWidget {
                                       _mostrarDialogoNuevoPago(context, reserva: Map<String, dynamic>.from(item));
                                       print('DEBUG(PagosGeneralView): Diálogo de pago cerrado para reserva: '+(item['codigoReserva'] ?? 'null').toString());
                                     } catch (e, st) {
-                                      print('ERROR(PagosGeneralView): Error al abrir diálogo de pago para reserva pendiente: '+e.toString());
-                                      print(st);
-                                      Get.snackbar(
-                                        'Error',
-                                        'No se pudo abrir el diálogo de pago para la reserva seleccionada',
-                                        snackPosition: SnackPosition.BOTTOM,
-                                        backgroundColor: Colors.red,
-                                        colorText: Colors.white,
+                                      print('ERROR(PagosGeneralView): Error al abrir diálogo de pago: $e\n$st');
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error al abrir el diálogo de pago: $e')),
                                       );
                                     }
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: const Text("Pagar ahora", style: TextStyle(fontSize: 16)),
+                                  child: const Text('Pagar ahora'),
                                 ),
                               ),
                             ],
@@ -403,6 +419,7 @@ class PagosGeneralView extends StatelessWidget {
     final notasController = TextEditingController();
     String metodoSeleccionado = 'EFECTIVO';
     bool isLoading = false;
+    Map<String, dynamic>? reservaSeleccionada;
 
     // Cargar reservas pendientes
     final db = LocalDBService();
@@ -450,7 +467,7 @@ class PagosGeneralView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<Map<String, dynamic>>(
-                  value: null,
+                  value: reservaSeleccionada,
                   decoration: InputDecoration(
                     labelText: "Seleccionar Reserva",
                     border: OutlineInputBorder(
@@ -458,44 +475,75 @@ class PagosGeneralView extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(Icons.confirmation_number),
                   ),
-                  items: reservas.map<DropdownMenuItem<Map<String, dynamic>>>((reserva) {
-                    final monto = reserva['monto'] as double;
-                    final fechaInicio = DateTime.parse(reserva['horarioInicio']);
-                    final fechaFin = DateTime.parse(reserva['horarioSalida']);
-                    final chapa = reserva['chapaAuto'] as String;
-                    
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: reserva as Map<String, dynamic>,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "Reserva: ${reserva['codigoReserva']}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Auto: $chapa",
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                          ),
-                          Text(
-                            "Monto: ${UtilesApp.formatearGuaraniesConSimbolo(monto)}",
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                          ),
-                          Text(
-                            "Horario: ${UtilesApp.formatearFechaDdMMAaaa(fechaInicio)} - ${UtilesApp.formatearFechaDdMMAaaa(fechaFin)}",
-                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (reserva) {
-                    if (reserva != null) {
-                      codigoController.text = reserva['codigoReserva'];
-                      montoController.text = reserva['monto'].toString();
+                  items: reservas.map<DropdownMenuItem<Map<String, dynamic>>>((res) {
+                    try {
+                      final monto = res['monto'] as double;
+                      final fechaInicio = DateTime.parse(res['horarioInicio']);
+                      final fechaFin = DateTime.parse(res['horarioSalida']);
+                      final chapa = res['chapaAuto'] as String? ?? '';
+                      final marca = res['marcaAuto'] as String? ?? '';
+                      final codigoReserva = res['codigoReserva'] as String? ?? '';
+                      print('DEBUG(PagosGeneralView): Renderizando item de reserva en dropdown: $codigoReserva, $marca, $chapa, $monto, $fechaInicio - $fechaFin');
+                      return DropdownMenuItem<Map<String, dynamic>>(
+                        value: res,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.directions_car, size: 18),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              flex: 2,
+                              child: Text(
+                                marca,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              flex: 2,
+                              child: Text(
+                                chapa,
+                                style: const TextStyle(color: Colors.grey),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              flex: 3,
+                              child: Text(
+                                UtilesApp.formatearGuaraniesConSimbolo(monto),
+                                style: const TextStyle(color: Colors.green),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } catch (e, st) {
+                      print('ERROR(PagosGeneralView): Error renderizando item de reserva en dropdown: $e\n$st');
+                      return const DropdownMenuItem(
+                        value: null,
+                        child: Text('Error al mostrar reserva'),
+                      );
                     }
+                  }).toList(),
+                  onChanged: (value) {
+                    print('DEBUG(PagosGeneralView): Reserva seleccionada en dropdown: '+(value?['codigoReserva']??'null').toString());
+                    setState(() {
+                      reservaSeleccionada = value;
+                      if (value != null) {
+                        codigoController.text = value['codigoReserva'] ?? '';
+                        montoController.text = (value['monto'] != null) ? value['monto'].toString() : '';
+                      } else {
+                        codigoController.clear();
+                        montoController.clear();
+                      }
+                    });
                   },
+                  isExpanded: true,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -510,6 +558,16 @@ class PagosGeneralView extends StatelessWidget {
                   ),
                   keyboardType: TextInputType.number,
                   readOnly: true, // El monto viene de la reserva
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  onTap: () {
+                    try {
+                      final monto = double.tryParse(montoController.text) ?? 0.0;
+                      montoController.text = UtilesApp.formatearGuaraniesConSimbolo(monto);
+                      print('DEBUG(PagosGeneralView): Formateando monto en campo: '+montoController.text);
+                    } catch (e) {
+                      print('ERROR(PagosGeneralView): Error al formatear monto en campo: '+e.toString());
+                    }
+                  },
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(

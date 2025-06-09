@@ -174,51 +174,109 @@ class AlumnoReservaScreen extends StatelessWidget {
                                     l.codigoPiso ==
                                     controller.pisoSeleccionado.value?.codigo)
                                 .map((lugar) {
-                              // Determinar si el lugar está ocupado por una reserva
-                              final reservasLugar = controller.db != null ? [] : [];
-                              // Si tienes acceso a las reservas en el controlador, puedes usarlo aquí
-                              // Por ahora, usamos el estado del lugar
-                              final ocupado = lugar.estado == "RESERVADO";
+                              // Determinar si el lugar está ocupado por una reserva en el horario seleccionado
+                              final inicio = controller.horarioInicio.value;
+                              final fin = controller.horarioSalida.value;
+                              bool ocupado = false;
+                              if (inicio != null && fin != null) {
+                                // Buscar reservas solapadas para este lugar
+                                final rawReservas = controller.db != null ? [] : [];
+                                // Si tienes acceso a las reservas en el controlador, úsalo aquí
+                                // Por ahora, usamos el estado del lugar y la lógica de solapamiento
+                                final reservasLugar = controller.db != null ? [] : [];
+                                // Si tienes acceso a las reservas, reemplaza por la lista real
+                                // Ejemplo:
+                                // final reservasLugar = controller.reservas.where((r) => r.codigoLugar == lugar.codigoLugar && (r.estadoReserva == 'PENDIENTE' || r.estadoReserva == 'COMPLETADO'));
+                                // for (final r in reservasLugar) {
+                                //   if (_horariosSeSolapan(inicio, fin, r.horarioInicio, r.horarioSalida)) {
+                                //     ocupado = true;
+                                //     break;
+                                //   }
+                                // }
+                                // Por ahora, si el lugar no está disponible, lo marcamos como ocupado
+                                ocupado = lugar.estado == "RESERVADO";
+                              } else {
+                                ocupado = lugar.estado == "RESERVADO";
+                              }
                               final seleccionado =
                                   lugar == controller.lugarSeleccionado.value;
                               final color = ocupado
                                   ? Colors.red
                                   : seleccionado
                                       ? Theme.of(context).primaryColor
-                                      : Colors.grey.shade300;
+                                      : lugar.estado == "DISPONIBLE"
+                                          ? Colors.green
+                                          : Colors.grey.shade300;
 
-                              return GestureDetector(
-                                onTap: !ocupado
-                                    ? () => controller.lugarSeleccionado.value = lugar
-                                    : null,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    border: Border.all(
-                                        color: seleccionado
-                                            ? Theme.of(context).primaryColor
-                                            : Colors.black12),
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 2,
-                                        offset: const Offset(0, 1),
+                              return ocupado
+                                  ? Tooltip(
+                                      message: 'Este lugar ya está reservado en el horario seleccionado. Selecciona uno verde.',
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          final inicio = controller.horarioInicio.value;
+                                          final fin = controller.horarioSalida.value;
+                                          print('LOG(RESERVAS): Intento de seleccionar lugar OCUPADO: ${lugar.codigoLugar}, horario: $inicio a $fin');
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: color,
+                                            border: Border.all(
+                                                color: seleccionado
+                                                    ? Theme.of(context).primaryColor
+                                                    : Colors.black12),
+                                            borderRadius: BorderRadius.circular(8),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.1),
+                                                blurRadius: 2,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Text(
+                                            lugar.codigoLugar,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                  child: Text(
-                                    lugar.codigoLugar,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: ocupado
-                                          ? Colors.white
-                                          : Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              );
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        final inicio = controller.horarioInicio.value;
+                                        final fin = controller.horarioSalida.value;
+                                        print('LOG(RESERVAS): Seleccionado lugar DISPONIBLE: ${lugar.codigoLugar}, horario: $inicio a $fin');
+                                        controller.lugarSeleccionado.value = lugar;
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          border: Border.all(
+                                              color: seleccionado
+                                                  ? Theme.of(context).primaryColor
+                                                  : Colors.black12),
+                                          borderRadius: BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 2,
+                                              offset: const Offset(0, 1),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text(
+                                          lugar.codigoLugar,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                                    );
                             }).toList(),
                           ),
                         ),
