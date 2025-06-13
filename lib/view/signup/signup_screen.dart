@@ -1,16 +1,8 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls, deprecated_member_use
 
-import 'package:finpay/config/images.dart';
 import 'package:finpay/config/app_theme.dart' as theme;
-import 'package:finpay/config/textstyle.dart';
 import 'package:finpay/controller/signup_controller.dart';
-import 'package:finpay/view/country/country_residence_screen.dart';
-import 'package:finpay/view/login/login_screen.dart';
-import 'package:finpay/widgets/custom_button.dart';
-import 'package:finpay/widgets/custom_textformfield.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class SignupScreen extends StatefulWidget {

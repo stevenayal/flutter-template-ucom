@@ -2,7 +2,6 @@
 
 import 'package:finpay/config/images.dart';
 import 'package:finpay/config/textstyle.dart';
-import 'package:finpay/view/profile/chat_screen.dart';
 import 'package:finpay/view/profile/edit_profile_screen.dart';
 import 'package:finpay/view/profile/setting_screen.dart';
 import 'package:finpay/view/profile/widget/income_container.dart';

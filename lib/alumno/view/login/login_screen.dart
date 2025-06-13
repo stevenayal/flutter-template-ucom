@@ -172,20 +172,20 @@ class LoginScreen extends StatelessWidget {
                       ? () => controller.login()
                       : null,
                   style: theme.AppTheme.primaryButtonStyle.copyWith(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.disabled)) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.disabled)) {
                           return theme.AppTheme.lightTextColor.withOpacity(0.5);
                         }
                         return theme.AppTheme.primaryColor;
                       },
                     ),
-                    shape: MaterialStateProperty.all(
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    elevation: MaterialStateProperty.all(4),
+                    elevation: WidgetStateProperty.all(4),
                   ),
                   child: Container(
                     height: 50,

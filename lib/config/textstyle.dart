@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static String? primaryColorString = "#4263EB";
-  static String? secondaryColorString = "#F5F7FE";
+  static String? primaryColorString = "#2E7D32";
+  static String? secondaryColorString = "#E8F5E9";
   static bool isLightTheme = true;
 
   static ThemeData getTheme() {

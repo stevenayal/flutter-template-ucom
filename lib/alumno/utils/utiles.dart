@@ -29,10 +29,10 @@ class UtilesApp {
     // El patrón '###,##0 ¤' coloca el símbolo al final por defecto.
     // Si queremos 'PYG ' al inicio, podemos ajustar esto:
     if (montoFormateado.endsWith('PYG')) {
-       montoFormateado = 'PYG ' + montoFormateado.replaceAll('PYG', '').trim();
+       montoFormateado = 'PYG ${montoFormateado.replaceAll('PYG', '').trim()}';
     } else if (montoFormateado.startsWith('PYG')) {
        // Ya está al inicio, solo asegurar espacio
-       montoFormateado = 'PYG ' + montoFormateado.replaceAll('PYG', '').trim();
+       montoFormateado = 'PYG ${montoFormateado.replaceAll('PYG', '').trim()}';
     }
     
     // Eliminar posible doble espacio si se añade 'PYG ' manualmente

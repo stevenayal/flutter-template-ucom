@@ -1,18 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:finpay/config/images.dart';
 import 'package:finpay/config/textstyle.dart';
 import 'package:finpay/controller/profile_controller.dart';
 import 'package:finpay/main.dart';
 import 'package:finpay/view/profile/notification_screen.dart';
 import 'package:finpay/view/profile/widget/custom_row.dart';
-import 'package:finpay/view/profile/widget/notification_view.dart';
-import 'package:finpay/view/profile/widget/social_view.dart';
-import 'package:finpay/view/splash/splash.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:finpay/view/profile/chat_screen.dart';
 import 'package:finpay/view/profile/currency_settings_screen.dart';
 import 'package:finpay/view/profile/language_settings_screen.dart';
 import 'package:finpay/view/profile/privacy_screen.dart';

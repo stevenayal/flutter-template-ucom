@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Colores principales de Subaru
-  static const Color primaryColor = Color(0xFF003B7A); // Azul WRX
-  static const Color secondaryColor = Color(0xFFE60012); // Rojo Subaru
-  static const Color accentColor = Color(0xFF00A0E9); // Azul claro Subaru
-  static const Color errorColor = Color(0xFFE60012); // Rojo Subaru para errores
+  // Colores principales en tonos de verde
+  static const Color primaryColor = Color(0xFF2E7D32); // Verde oscuro
+  static const Color secondaryColor = Color(0xFF4CAF50); // Verde medio
+  static const Color accentColor = Color(0xFF81C784); // Verde claro
+  static const Color errorColor = Color(0xFFE53935); // Rojo para errores
   static const Color textColor = Color(0xFF1A1A1A); // Negro para texto principal
   static const Color lightTextColor = Color(0xFF666666); // Gris para texto secundario
   static const Color backgroundColor = Color(0xFFF5F5F5); // Fondo claro

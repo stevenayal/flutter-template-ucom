@@ -5,6 +5,7 @@ import '../../alumno/model/pago_model.dart';
 import '../../alumno/utils/utiles.dart';
 import '../../widgets/custom_button.dart';
 import '../../api/local.db.service.dart';
+import 'package:finpay/controller/home_controller.dart';
 
 class PagosGeneralView extends StatelessWidget {
   // Reutilizamos el controlador de alumno pero con un nombre diferente
@@ -623,7 +624,7 @@ class PagosGeneralView extends StatelessWidget {
 
                       try {
                         final nuevoPago = PagoDetallado(
-                          codigoPago: "PAG-${DateTime.now().millisecondsSinceEpoch}",
+                          codigoPago: "PAG-"+DateTime.now().millisecondsSinceEpoch.toString(),
                           codigoReservaAsociada: codigoController.text,
                           montoPagado: double.parse(montoController.text),
                           fechaPago: DateTime.now(),
@@ -632,9 +633,43 @@ class PagosGeneralView extends StatelessWidget {
                           notas: notasController.text.isEmpty ? null : notasController.text,
                         );
 
+                        // Registra el pago
+                        print("DEBUG(PagosGeneralView): Registrando pago: "+nuevoPago.codigoPago);
                         await controller.registrarPago(nuevoPago);
+
+                        // Actualiza la reserva asociada (cambia su estado a COMPLETADO y libera el lugar)
+                        final db = LocalDBService();
+                        final reservas = await db.getAll("reservas.json");
+                        final reservaAsociada = reservas.firstWhere((r) => (r['codigoReserva'] ?? '') == codigoController.text, orElse: () => <String, dynamic>{} );
+                        if (reservaAsociada.isNotEmpty) {
+                          reservaAsociada['estadoReserva'] = 'COMPLETADO';
+                          reservaAsociada['lugar'] = null; // Libera el lugar (asigna null o un valor que indique que el lugar está libre)
+                          // Actualización manual: se actualiza el objeto en memoria y luego se guarda la lista actualizada en "reservas.json".
+                          final index = reservas.indexWhere((r) => (r['codigoReserva'] ?? '') == codigoController.text);
+                          if (index != -1) {
+                             reservas[index] = reservaAsociada;
+                             await db.saveAll("reservas.json", reservas);
+                             print("DEBUG(PagosGeneralView): Reserva "+codigoController.text+" actualizada a COMPLETADO y lugar liberado.");
+                          } else {
+                             print("WARN(PagosGeneralView): No se encontró la reserva asociada al pago (código: "+codigoController.text+").");
+                          }
+                        } else {
+                          print("WARN(PagosGeneralView): No se encontró la reserva asociada al pago (código: "+codigoController.text+").");
+                        }
+
+                        // Notificar al HomeController para que actualice las estadísticas
+                        try {
+                          final homeController = Get.find<HomeController>();
+                          await homeController.actualizarEstadisticasEstacionamiento();
+                          await homeController.cargarPagosPrevios(); // Cargar pagos previos para el Home
+                          print('DEBUG(PagosGeneralView): Estadísticas y pagos previos del Home actualizados tras el pago.');
+                        } catch (e, st) {
+                          print('ERROR(PagosGeneralView): No se pudo actualizar HomeController tras el pago: $e\n$st');
+                        }
+
                         Navigator.pop(context);
                       } catch (e) {
+                        print("ERROR(PagosGeneralView): Error al registrar pago o actualizar reserva: "+e.toString());
                         Get.snackbar(
                           'Error',
                           e.toString(),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../controller/signup_controller.dart';
 import '../../config/app_theme.dart' as theme;
 import '../../config/textstyle.dart' as text;
 
 class SignupScreen extends StatelessWidget {
-  SignupScreen({Key? key}) : super(key: key);
+  SignupScreen({super.key});
 
   final controller = Get.put(SignupController());
 
@@ -134,9 +133,9 @@ class SignupScreen extends StatelessWidget {
               Obx(() => ElevatedButton(
                     onPressed: controller.isFormValid ? controller.signup : null,
                     style: theme.AppTheme.primaryButtonStyle.copyWith(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.disabled)) {
+                      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                        (Set<WidgetState> states) {
+                          if (states.contains(WidgetState.disabled)) {
                             return theme.AppTheme.lightTextColor.withOpacity(0.5);
                           }
                           return theme.AppTheme.primaryColor;
@@ -281,9 +280,9 @@ class SignupScreen extends StatelessWidget {
             onChanged(newValue);
             if (newValue == 'Otros') {
               if (label == 'Marca') {
-                this.controller.validateCustomBrand();
+                controller.validateCustomBrand();
               } else {
-                this.controller.validateCustomModel();
+                controller.validateCustomModel();
               }
             }
           },

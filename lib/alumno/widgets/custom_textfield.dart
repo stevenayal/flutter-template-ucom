@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import '../config/app_theme.dart' as theme;
-import '../config/textstyle.dart' as text;
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -13,13 +12,13 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     required this.prefixIcon,
     this.keyboardType,
     this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

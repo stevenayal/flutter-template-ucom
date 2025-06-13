@@ -11,6 +11,7 @@ import 'package:finpay/view/home/widget/circle_card.dart';
 import 'package:finpay/view/home/widget/custom_card.dart';
 import 'package:finpay/alumno/view/reservas/reservas_screen.dart';
 import 'package:finpay/view/pagos/pagos_general_view.dart';
+import 'package:finpay/alumno/model/pago_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('DEBUG(HomeView): Building HomeView...');
     return Container(
       color: AppTheme.isLightTheme == false
           ? const Color(0xff15141F)
@@ -39,14 +41,14 @@ class HomeView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Good morning",
+                      "Buenos días",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w400,
                             color: Theme.of(context).textTheme.bodySmall!.color,
                           ),
                     ),
                     Text(
-                      "Good morning",
+                      "Bienvenido",
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 24,
@@ -101,162 +103,106 @@ class HomeView extends StatelessWidget {
               physics: const ClampingScrollPhysics(),
               padding: EdgeInsets.zero,
               children: [
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 30),
+                // Tarjetas de estadísticas de estacionamiento
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppTheme.isLightTheme == false
-                              ? HexColor('#15141f')
-                              : Theme.of(context).appBarTheme.backgroundColor,
-                          border: Border.all(
-                            color: HexColor(AppTheme.primaryColorString!)
-                                .withOpacity(0.05),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Row(
-                            children: [
-                              customContainer(
-                                title: "USD",
-                                background: AppTheme.primaryColorString,
-                                textColor: Colors.white,
-                              ),
-                              const SizedBox(width: 5),
-                              customContainer(
-                                title: "IDR",
-                                background: AppTheme.isLightTheme == false
-                                    ? '#211F32'
-                                    : "#FFFFFF",
-                                textColor: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .color,
-                              )
-                            ],
-                          ),
+                      Text(
+                        "Estadísticas de Estacionamiento",
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const SizedBox(height: 16),
                       Row(
                         children: [
-                          Icon(
-                            Icons.add,
-                            color: HexColor(AppTheme.primaryColorString!),
-                            size: 20,
+                          Expanded(
+                            child: Obx(() => _buildStatCard(
+                              context,
+                              "Reservas del Mes",
+                              homeController.reservasMesActual.value.toString(),
+                              Icons.payments_outlined,
+                              const Color(0xFF2E7D32),
+                            )),
                           ),
-                          Text(
-                            "Add Currency",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: HexColor(AppTheme.primaryColorString!),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Obx(() => _buildStatCard(
+                              context,
+                              "Reservas Pendientes",
+                              homeController.reservasPendientes.value.toString(),
+                              Icons.pending_actions,
+                              const Color(0xFF4CAF50),
+                            )),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Obx(() => _buildStatCard(
+                              context,
+                              "Autos Registrados",
+                              homeController.cantidadAutos.value.toString(),
+                              Icons.directions_car,
+                              const Color(0xFF81C784),
+                            )),
                           ),
                         ],
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 30),
+                // Botones de acción
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: SizedBox(
-                    height: 180,
-                    width: Get.width,
-                    child: Swiper(
-                      itemBuilder: (BuildContext context, int index) {
-                        return SvgPicture.asset(
-                          DefaultImages.debitcard,
-                          fit: BoxFit.fill,
-                        );
-                      },
-                      itemCount: 3,
-                      viewportFraction: 1,
-                      scale: 0.9,
-                      autoplay: true,
-                      itemWidth: Get.width,
-                      itemHeight: 180,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    InkWell(
-                      focusColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      onTap: () {
-                        Get.to(const TopUpSCreen(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InkWell(
+                        focusColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          print('DEBUG(HomeView): Reservar button pressed.');
+                          Get.to(
+                            () => AlumnoReservaScreen(),
+                            binding: BindingsBuilder(() {
+                              Get.delete<ReservaController>();
+                              Get.create(() => ReservaController());
+                            }),
                             transition: Transition.downToUp,
-                            duration: const Duration(milliseconds: 500));
-                      },
-                      child: circleCard(
-                        image: DefaultImages.topup,
-                        title: "Pagar",
+                            duration: const Duration(milliseconds: 500),
+                          );
+                        },
+                        child: circleCard(
+                          image: DefaultImages.transfer,
+                          title: "Reservar Lugar",
+                        ),
                       ),
-                    ),
-                    InkWell(
-                      focusColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      onTap: () {},
-                      child: circleCard(
-                        image: DefaultImages.withdraw,
-                        title: "Withdraw",
+                      InkWell(
+                        focusColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          print('DEBUG(HomeView): Pagos button pressed.');
+                          Get.to(
+                            () => PagosGeneralView(),
+                            transition: Transition.rightToLeft,
+                            duration: const Duration(milliseconds: 300),
+                          );
+                        },
+                        child: circleCard(
+                          image: DefaultImages.pagoIcono,
+                          title: "Realizar Pago",
+                        ),
                       ),
-                    ),
-                    InkWell(
-                      focusColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      onTap: () {
-                        Get.to(
-                          () => AlumnoReservaScreen(),
-                          binding: BindingsBuilder(() {
-                            Get.delete<ReservaController>();
-                            Get.create(() => ReservaController());
-                          }),
-                          transition: Transition.downToUp,
-                          duration: const Duration(milliseconds: 500),
-                        );
-                      },
-                      child: circleCard(
-                        image: DefaultImages.transfer,
-                        title: "Reservar",
-                      ),
-                    ),
-                    InkWell(
-                      focusColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      onTap: () {
-                        Get.to(
-                          () => PagosGeneralView(),
-                          transition: Transition.rightToLeft,
-                          duration: const Duration(milliseconds: 300),
-                        );
-                      },
-                      child: circleCard(
-                        image: DefaultImages.pagoIcono,
-                        title: "Pagos",
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Padding(
@@ -284,7 +230,7 @@ class HomeView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Pagos previos",
+                                "Movimientos Recientes",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge!
@@ -298,36 +244,232 @@ class HomeView extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Obx(() {
+                          print('DEBUG(HomeView): Rendering pagosPrevios list. Count: ${homeController.pagosPrevios.length}');
+                          if (homeController.pagosPrevios.isEmpty) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text("No hay movimientos registrados.", style: TextStyle(color: Colors.grey)),
+                            );
+                          }
                           return Column(
                             children: homeController.pagosPrevios.map((pago) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: ListTile(
-                                  leading: const Icon(Icons.payments_outlined),
-                                  title: Text(
-                                      "Reserva: ${pago.codigoReservaAsociada}"),
-                                  subtitle: Text(
-                                      "Fecha: ${UtilesApp.formatearFechaDdMMAaaa(pago.fechaPago)}"),
-                                  trailing: Text(
-                                    "- ${UtilesApp.formatearGuaranies(pago.montoPagado)}",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              );
+                              print('DEBUG(HomeView): Rendering pagoPrevio: ${pago.codigoPago}');
+                              return _buildPaymentListItem(context, pago);
                             }).toList(),
                           );
                         }),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
                 )
               ],
             ),
-          )
+          ),
+          // Indicador de carga global
+          Obx(() {
+            if (homeController.isLoading.value) {
+              return Container(
+                color: Colors.black.withOpacity(0.3),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
         ],
+      ),
+    );
+  }
+
+  // Método auxiliar para obtener el color del estado de pago
+  Color _getColorEstado(String estado) {
+    switch (estado) {
+      case 'COMPLETADO':
+        return Colors.green;
+      case 'PENDIENTE':
+        return Colors.orange;
+      case 'CANCELADO':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Método auxiliar para obtener el ícono del método de pago
+  IconData _getIconMetodoPago(String metodo) {
+    switch (metodo) {
+      case 'EFECTIVO':
+        return Icons.money;
+      case 'TARJETA':
+        return Icons.credit_card;
+      case 'TRANSFERENCIA':
+        return Icons.account_balance;
+      default:
+        return Icons.payment;
+    }
+  }
+
+  // Nuevo método para construir cada elemento de la lista de pagos
+  Widget _buildPaymentListItem(BuildContext context, PagoDetallado pago) {
+    final colorEstado = _getColorEstado(pago.estadoPago);
+    final iconMetodo = _getIconMetodoPago(pago.metodoPago);
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorEstado.withOpacity(0.3)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Pago #${pago.codigoPago}",
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colorEstado.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    pago.estadoPago,
+                    style: TextStyle(
+                      color: colorEstado,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Reserva: ${pago.codigoReservaAsociada}",
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                  ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(iconMetodo, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  pago.metodoPago,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                ),
+                const Spacer(),
+                Text(
+                  UtilesApp.formatearGuaranies(pago.montoPagado),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: colorEstado,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Fecha: ${UtilesApp.formatearFechaDdMMAaaa(pago.fechaPago)}",
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontSize: 12,
+                    color: Colors.grey[500],
+                  ),
+            ),
+            if (pago.notas != null && pago.notas!.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                "Notas: ${pago.notas!}",
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontSize: 12,
+                      color: Colors.grey[500],
+                      fontStyle: FontStyle.italic,
+                    ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(BuildContext context, String title, String value, IconData icon, Color color) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: color.withOpacity(0.2), width: 1),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

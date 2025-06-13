@@ -1,10 +1,8 @@
 // Archivo del alumno
 // Este archivo es parte del trabajo realizado por el alumno y puede contener modificaciones.
 
-import '../config/car_brands.dart';
 import '../model/car_data.dart';
 import '../model/user_data.dart';
-import '../view/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -2,8 +2,6 @@
 // Este archivo es parte del trabajo realizado por el alumno y puede contener modificaciones.
 
 import 'package:flutter/material.dart';
-import '../config/app_theme.dart' as theme;
-import '../config/textstyle.dart' as text;
 
 class CustomButton extends StatelessWidget {
   final VoidCallback? onPressed;
