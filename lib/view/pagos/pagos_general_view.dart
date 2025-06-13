@@ -381,6 +381,22 @@ class PagosGeneralView extends StatelessWidget {
                   ),
                 ),
               ],
+              if (pago.estadoPago == 'PENDIENTE') ...[
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      print('DEBUG(PagosGeneralView): Botón Cancelar presionado para pago: ${pago.codigoPago}');
+                      controller.cancelarPago(pago.codigoPago, pago.codigoReservaAsociada);
+                    },
+                    child: Text(
+                      "Cancelar Pago",
+                      style: TextStyle(color: Colors.red[700], fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -449,255 +465,233 @@ class PagosGeneralView extends StatelessWidget {
       return;
     }
 
+    print('DEBUG(PagosGeneralView): Abriendo diálogo de nuevo pago.');
+
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Row(
-            children: [
-              Icon(
-                Icons.payment,
-                color: Theme.of(context).primaryColor,
-              ),
-              const SizedBox(width: 8),
-              const Text("Registrar Pago"),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<Map<String, dynamic>>(
-                  value: reservaSeleccionada,
-                  decoration: InputDecoration(
-                    labelText: "Seleccionar Reserva",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+      builder: (context) => AlertDialog(
+        title: const Text("Nuevo Pago"),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setStateDialog) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<Map<String, dynamic>>(
+                    value: reservaSeleccionada,
+                    decoration: InputDecoration(
+                      labelText: "Seleccionar Reserva",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      prefixIcon: const Icon(Icons.confirmation_number),
                     ),
-                    prefixIcon: const Icon(Icons.confirmation_number),
-                  ),
-                  items: reservas.map<DropdownMenuItem<Map<String, dynamic>>>((res) {
-                    try {
-                      final monto = res['monto'] as double;
-                      final fechaInicio = DateTime.parse(res['horarioInicio']);
-                      final fechaFin = DateTime.parse(res['horarioSalida']);
-                      final chapa = res['chapaAuto'] as String? ?? '';
-                      final marca = res['marcaAuto'] as String? ?? '';
-                      final codigoReserva = res['codigoReserva'] as String? ?? '';
-                      print('DEBUG(PagosGeneralView): Renderizando item de reserva en dropdown: $codigoReserva, $marca, $chapa, $monto, $fechaInicio - $fechaFin');
-                      return DropdownMenuItem<Map<String, dynamic>>(
-                        value: res,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.directions_car, size: 18),
-                            const SizedBox(width: 6),
-                            Flexible(
-                              flex: 2,
-                              child: Text(
-                                marca,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              flex: 2,
-                              child: Text(
-                                chapa,
-                                style: const TextStyle(color: Colors.grey),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              flex: 3,
-                              child: Text(
-                                UtilesApp.formatearGuaraniesConSimbolo(monto),
-                                style: const TextStyle(color: Colors.green),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } catch (e, st) {
-                      print('ERROR(PagosGeneralView): Error renderizando item de reserva en dropdown: $e\n$st');
-                      return const DropdownMenuItem(
-                        value: null,
-                        child: Text('Error al mostrar reserva'),
-                      );
-                    }
-                  }).toList(),
-                  onChanged: (value) {
-                    print('DEBUG(PagosGeneralView): Reserva seleccionada en dropdown: '+(value?['codigoReserva']??'null').toString());
-                    setState(() {
-                      reservaSeleccionada = value;
-                      if (value != null) {
-                        codigoController.text = value['codigoReserva'] ?? '';
-                        montoController.text = (value['monto'] != null) ? value['monto'].toString() : '';
-                      } else {
-                        codigoController.clear();
-                        montoController.clear();
-                      }
-                    });
-                  },
-                  isExpanded: true,
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: montoController,
-                  decoration: InputDecoration(
-                    labelText: "Monto",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    prefixIcon: const Icon(Icons.attach_money),
-                    prefixText: "₲ ",
-                  ),
-                  keyboardType: TextInputType.number,
-                  readOnly: true, // El monto viene de la reserva
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  onTap: () {
-                    try {
-                      final monto = double.tryParse(montoController.text) ?? 0.0;
-                      montoController.text = UtilesApp.formatearGuaraniesConSimbolo(monto);
-                      print('DEBUG(PagosGeneralView): Formateando monto en campo: '+montoController.text);
-                    } catch (e) {
-                      print('ERROR(PagosGeneralView): Error al formatear monto en campo: '+e.toString());
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: metodoSeleccionado,
-                  decoration: InputDecoration(
-                    labelText: "Método de Pago",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    prefixIcon: Icon(_getIconMetodoPago(metodoSeleccionado)),
-                  ),
-                  items: ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA']
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-                  onChanged: (value) => metodoSeleccionado = value!,
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: notasController,
-                  decoration: InputDecoration(
-                    labelText: "Notas (opcional)",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    prefixIcon: const Icon(Icons.note),
-                  ),
-                  maxLines: 2,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: isLoading ? null : () => Navigator.pop(context),
-              child: const Text("Cancelar"),
-            ),
-            ElevatedButton(
-              onPressed: isLoading
-                  ? null
-                  : () async {
-                      if (codigoController.text.isEmpty || montoController.text.isEmpty) {
-                        Get.snackbar(
-                          'Error',
-                          'Por favor seleccione una reserva',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                        return;
-                      }
-
-                      setState(() => isLoading = true);
-
+                    items: reservas.map<DropdownMenuItem<Map<String, dynamic>>>((res) {
                       try {
-                        final nuevoPago = PagoDetallado(
-                          codigoPago: "PAG-"+DateTime.now().millisecondsSinceEpoch.toString(),
-                          codigoReservaAsociada: codigoController.text,
-                          montoPagado: double.parse(montoController.text),
-                          fechaPago: DateTime.now(),
-                          metodoPago: metodoSeleccionado,
-                          estadoPago: 'COMPLETADO',
-                          notas: notasController.text.isEmpty ? null : notasController.text,
+                        final monto = res['monto'] as double;
+                        final fechaInicio = DateTime.parse(res['horarioInicio']);
+                        final fechaFin = DateTime.parse(res['horarioSalida']);
+                        final chapa = res['chapaAuto'] as String? ?? '';
+                        final marca = res['marcaAuto'] as String? ?? '';
+                        final codigoReserva = res['codigoReserva'] as String? ?? '';
+                        print('DEBUG(PagosGeneralView): Renderizando item de reserva en dropdown: $codigoReserva, $marca, $chapa, $monto, $fechaInicio - $fechaFin');
+                        return DropdownMenuItem<Map<String, dynamic>>(
+                          value: res,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.directions_car, size: 18),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                flex: 2,
+                                child: Text(
+                                  marca,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                flex: 2,
+                                child: Text(
+                                  chapa,
+                                  style: const TextStyle(color: Colors.grey),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                flex: 3,
+                                child: Text(
+                                  UtilesApp.formatearGuaraniesConSimbolo(monto),
+                                  style: const TextStyle(color: Colors.green),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         );
-
-                        // Registra el pago
-                        print("DEBUG(PagosGeneralView): Registrando pago: "+nuevoPago.codigoPago);
-                        await controller.registrarPago(nuevoPago);
-
-                        // Actualiza la reserva asociada (cambia su estado a COMPLETADO y libera el lugar)
-                        final db = LocalDBService();
-                        final reservas = await db.getAll("reservas.json");
-                        final reservaAsociada = reservas.firstWhere((r) => (r['codigoReserva'] ?? '') == codigoController.text, orElse: () => <String, dynamic>{} );
-                        if (reservaAsociada.isNotEmpty) {
-                          reservaAsociada['estadoReserva'] = 'COMPLETADO';
-                          reservaAsociada['lugar'] = null; // Libera el lugar (asigna null o un valor que indique que el lugar está libre)
-                          // Actualización manual: se actualiza el objeto en memoria y luego se guarda la lista actualizada en "reservas.json".
-                          final index = reservas.indexWhere((r) => (r['codigoReserva'] ?? '') == codigoController.text);
-                          if (index != -1) {
-                             reservas[index] = reservaAsociada;
-                             await db.saveAll("reservas.json", reservas);
-                             print("DEBUG(PagosGeneralView): Reserva "+codigoController.text+" actualizada a COMPLETADO y lugar liberado.");
-                          } else {
-                             print("WARN(PagosGeneralView): No se encontró la reserva asociada al pago (código: "+codigoController.text+").");
-                          }
+                      } catch (e, st) {
+                        print('ERROR(PagosGeneralView): Error renderizando item de reserva en dropdown: $e\n$st');
+                        return const DropdownMenuItem(
+                          value: null,
+                          child: Text('Error al mostrar reserva'),
+                        );
+                      }
+                    }).toList(),
+                    onChanged: (value) {
+                      print('DEBUG(PagosGeneralView): Reserva seleccionada en dropdown: '+(value?['codigoReserva']??'null').toString());
+                      setStateDialog(() {
+                        reservaSeleccionada = value;
+                        if (value != null) {
+                          codigoController.text = value['codigoReserva'] ?? '';
+                          montoController.text = (value['monto'] != null) ? value['monto'].toString() : '';
                         } else {
-                          print("WARN(PagosGeneralView): No se encontró la reserva asociada al pago (código: "+codigoController.text+").");
+                          codigoController.clear();
+                          montoController.clear();
                         }
-
-                        // Notificar al HomeController para que actualice las estadísticas
-                        try {
-                          final homeController = Get.find<HomeController>();
-                          await homeController.actualizarEstadisticasEstacionamiento();
-                          await homeController.cargarPagosPrevios(); // Cargar pagos previos para el Home
-                          print('DEBUG(PagosGeneralView): Estadísticas y pagos previos del Home actualizados tras el pago.');
-                        } catch (e, st) {
-                          print('ERROR(PagosGeneralView): No se pudo actualizar HomeController tras el pago: $e\n$st');
-                        }
-
-                        Navigator.pop(context);
+                      });
+                    },
+                    isExpanded: true,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: montoController,
+                    decoration: InputDecoration(
+                      labelText: "Monto",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      prefixIcon: const Icon(Icons.attach_money),
+                      prefixText: "₲ ",
+                    ),
+                    keyboardType: TextInputType.number,
+                    readOnly: true, // El monto viene de la reserva
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    onTap: () {
+                      try {
+                        final monto = double.tryParse(montoController.text) ?? 0.0;
+                        montoController.text = UtilesApp.formatearGuaraniesConSimbolo(monto);
+                        print('DEBUG(PagosGeneralView): Formateando monto en campo: '+montoController.text);
                       } catch (e) {
-                        print("ERROR(PagosGeneralView): Error al registrar pago o actualizar reserva: "+e.toString());
-                        Get.snackbar(
-                          'Error',
-                          e.toString(),
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                      } finally {
-                        setState(() => isLoading = false);
+                        print('ERROR(PagosGeneralView): Error al formatear monto en campo: '+e.toString());
                       }
                     },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: metodoSeleccionado,
+                    decoration: InputDecoration(
+                      labelText: "Método de Pago",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    )
-                  : const Text("Registrar Pago"),
-            ),
-          ],
+                      prefixIcon: Icon(_getIconMetodoPago(metodoSeleccionado)),
+                    ),
+                    items: ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA']
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .toList(),
+                    onChanged: (value) => metodoSeleccionado = value!,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: notasController,
+                    decoration: InputDecoration(
+                      labelText: "Notas (opcional)",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      prefixIcon: const Icon(Icons.note),
+                    ),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          print('DEBUG(PagosGeneralView): Pago cancelado por el usuario.');
+                          Navigator.pop(context); // Cerrar el diálogo
+                        },
+                        child: const Text("Cancelar"),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                print('DEBUG(PagosGeneralView): Intentando registrar pago...');
+                                setStateDialog(() {
+                                  isLoading = true;
+                                });
+                                try {
+                                  final nuevoPago = PagoDetallado(
+                                    codigoPago: "PAG-"+DateTime.now().millisecondsSinceEpoch.toString(),
+                                    codigoReservaAsociada: codigoController.text,
+                                    montoPagado: double.parse(montoController.text),
+                                    fechaPago: DateTime.now(),
+                                    metodoPago: metodoSeleccionado,
+                                    estadoPago: 'COMPLETADO',
+                                    notas: notasController.text.isEmpty ? null : notasController.text,
+                                  );
+
+                                  // Registra el pago
+                                  print("DEBUG(PagosGeneralView): Registrando pago: "+nuevoPago.codigoPago);
+                                  await controller.registrarPago(nuevoPago);
+
+                                  // Actualiza la reserva asociada (cambia su estado a COMPLETADO y libera el lugar)
+                                  final db = LocalDBService();
+                                  final reservas = await db.getAll("reservas.json");
+                                  final reservaAsociada = reservas.firstWhere((r) => (r['codigoReserva'] ?? '') == codigoController.text, orElse: () => <String, dynamic>{} );
+                                  if (reservaAsociada.isNotEmpty) {
+                                    reservaAsociada['estadoReserva'] = 'COMPLETADO';
+                                    reservaAsociada['lugar'] = null; // Libera el lugar (asigna null o un valor que indique que el lugar está libre)
+                                    // Actualización manual: se actualiza el objeto en memoria y luego se guarda la lista actualizada en "reservas.json".
+                                    final index = reservas.indexWhere((r) => (r['codigoReserva'] ?? '') == codigoController.text);
+                                    if (index != -1) {
+                                       reservas[index] = reservaAsociada;
+                                       await db.saveAll("reservas.json", reservas);
+                                       print("DEBUG(PagosGeneralView): Reserva "+codigoController.text+" actualizada a COMPLETADO y lugar liberado.");
+                                    } else {
+                                       print("WARN(PagosGeneralView): No se encontró la reserva asociada al pago (código: "+codigoController.text+").");
+                                    }
+                                  } else {
+                                    print("WARN(PagosGeneralView): No se encontró la reserva asociada al pago (código: "+codigoController.text+").");
+                                  }
+
+                                  // Notificar al HomeController para que actualice las estadísticas
+                                  try {
+                                    final homeController = Get.find<HomeController>();
+                                    await homeController.actualizarEstadisticasEstacionamiento();
+                                    await homeController.cargarPagosPrevios(); // Cargar pagos previos para el Home
+                                    print('DEBUG(PagosGeneralView): Estadísticas y pagos previos del Home actualizados tras el pago.');
+                                  } catch (e, st) {
+                                    print('ERROR(PagosGeneralView): No se pudo actualizar HomeController tras el pago: $e\n$st');
+                                  }
+
+                                  Navigator.pop(context); // Cerrar el diálogo
+                                } catch (e, st) {
+                                  print('ERROR(PagosGeneralView): Error al registrar pago o actualizar reserva: $e\n$st');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error al registrar el pago: $e')),
+                                  );
+                                } finally {
+                                  setStateDialog(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              },
+                        child: const Text("Registrar"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

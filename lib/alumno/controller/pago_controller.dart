@@ -130,6 +130,72 @@ class AlumnoPagoController extends GetxController {
     return total;
   }
 
+  Future<void> cancelarPago(String codigoPago, String codigoReservaAsociada) async {
+    print('DEBUG(Controller): Intentando cancelar pago $codigoPago y reserva $codigoReservaAsociada...');
+    try {
+      isLoading.value = true;
+
+      // 1. Actualizar el pago en pagos.json
+      final pagosRaw = await db.getAll("pagos.json");
+      final pagoIndex = pagosRaw.indexWhere((p) => p['codigoPago'] == codigoPago);
+
+      if (pagoIndex != -1) {
+        pagosRaw[pagoIndex]['estadoPago'] = 'CANCELADO';
+        await db.saveAll("pagos.json", pagosRaw);
+        print('DEBUG(Controller): Pago $codigoPago actualizado a CANCELADO en pagos.json');
+      } else {
+        print('WARNING(Controller): Pago $codigoPago no encontrado en pagos.json para cancelar.');
+      }
+
+      // 2. Actualizar la reserva en reservas.json (cambiar a CANCELADA si aplica)
+      final reservas = await db.getAll("reservas.json");
+      final reservaIndex = reservas.indexWhere((r) => r['codigoReserva'] == codigoReservaAsociada);
+
+      if (reservaIndex != -1) {
+        reservas[reservaIndex]['estadoReserva'] = 'CANCELADA';
+        // Si la reserva se cancela, también se libera el lugar
+        final codigoLugar = reservas[reservaIndex]['codigoLugar'];
+        if (codigoLugar != null) {
+          final lugares = await db.getAll("lugares.json");
+          final lugarIndex = lugares.indexWhere((l) => l['codigoLugar'] == codigoLugar);
+          if (lugarIndex != -1) {
+            lugares[lugarIndex]['estado'] = 'DISPONIBLE';
+            await db.saveAll("lugares.json", lugares);
+            print('DEBUG(Controller): Lugar de estacionamiento $codigoLugar liberado tras cancelación.');
+          }
+        }
+        await db.saveAll("reservas.json", reservas);
+        print('DEBUG(Controller): Reserva $codigoReservaAsociada actualizada a CANCELADA en reservas.json');
+      } else {
+        print('WARNING(Controller): Reserva $codigoReservaAsociada no encontrada en reservas.json para cancelar.');
+      }
+
+      // 3. Recargar la lista de pagos para actualizar la UI
+      await cargarPagos();
+
+      Get.snackbar(
+        'Pago Cancelado',
+        'El pago $codigoPago ha sido cancelado.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      print('DEBUG(Controller): Pago $codigoPago cancelado exitosamente.');
+
+    } catch (e) {
+      print("ERROR(Controller): Error al cancelar pago: $e");
+      Get.snackbar(
+        'Error',
+        'No se pudo cancelar el pago: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<bool> _actualizarReservaYEstacionamiento(String codigoReserva) async {
     try {
       // 1. Obtener la reserva y verificar que pertenece al cliente actual
