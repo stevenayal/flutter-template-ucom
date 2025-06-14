@@ -2,6 +2,10 @@
 
 ![Primera Ejecucion](assets/ejecucion1.png)
 
+![image](https://github.com/user-attachments/assets/6ce1c7af-b4ab-4ddc-8c82-f02931b9952c)
+![image](https://github.com/user-attachments/assets/9a1586f0-ddd8-4de8-91c4-e35358c0f7da)
+
+
 > **Este proyecto fue realizado para cumplir con la materia de _Programación de Dispositivos Móviles_**
 >
 > ![Logo UCOM](assets/logo_ucom.png)
